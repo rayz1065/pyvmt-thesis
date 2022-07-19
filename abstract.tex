@@ -1,0 +1,25 @@
+\chapter*{Abstract}
+\label{abstract}
+
+\addcontentsline{toc}{chapter}{Abstract}
+
+\paragraph*{Context and motivation}
+PyVmt was created by me as part of a formative internship at the Bruno Kessler Foundation. It's an extension of an existing project which was also created in the foundation, pySMT, which offers a solver-agnostic formula manipulation interface.
+Several factors motivate the creation for an extension:
+\begin{itemize}
+  \item the creation of specific tools and functions which are commonly used in model verification
+  \item the extension of the existing SMT-LIB parser to extract the information relating to the model and its properties written in VMT-LIB format
+  \item the addition of support for model checkers to offer an experience similar to pySMT while dealing with verification problems
+\end{itemize}
+
+\paragraph*{What can PyVmt do?}
+PyVmt is a python library that enables the user to manage VMT models by reading and writing code in the VMT-LIB format, modifying models by adding variables, constraints, properties, or with some higher level function such as renaming and synchronous combination. It offers several model checkers as backend for verification, allowing the user to choose one or several of them to compare the results.
+
+\paragraph*{Techniques used}
+PyVmt is written in Python, it was developed using a continuous integration approach, utilizing github actions as a tool to verify non-regression after each update.
+Tests are run using the pytest test suite and are mostly composed of unit tests which aim to cover most of the library's source code.
+Documentation is mostly auto-generated from the doc-strings using sphinx.
+After all the tests pass, the new version of the library is automatically uploaded as a package to PyPi so that any user can use it in their own project.
+
+\paragraph*{Results reached}
+To verify the functionality of PyVmt, I collected several benchmarks and ran them against the available solvers. The results from these experiments show a promising support from the backends to deal with most of the problems within their supported theories.
