@@ -19,7 +19,7 @@ Verification modulo theory is important because %...
 VMT-LIB is an extension of the SMT2 format and provides a standard interface for defining transition systems by exploiting the possibility to attach annotations to terms and formulas, which can be used to specify the model behaviors. \cite{VMT-LIB}
 
 It is designed with a limited amount of language constructs, aiming for simplicity for anyone interested in implementing the language within their VMT solver:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \textbf{:next name} is used to specify state variables. To define a state variable, two variables are created, one representing the current state and one representing the next state. The next annotation is used to link the next state variable to the current state variable.
     \item \textbf{:init} is used to specify the formula used to constrain the initial states for the system.
     \item \textbf{:trans} is used to specify the formula used to constrain the transitions from each state to the next for the system.
