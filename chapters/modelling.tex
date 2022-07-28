@@ -2,6 +2,83 @@
 PyVmt exports a Model class which allows the user to define a model from scratch, manually adding variables and formulae or using helper functions to do so.
 
 \section{State variables}
+State variables in PyVmt are pySMT Symbols and can be added to a model using the add\_state\_variable method passing the curr state variable, or the create\_state\_variable helper method.
+In contrast with VMT-LIB, PyVmt doesn't keep track of next state variables explicitly, instead it uses a custom operator to wrap formulae referring to the next state and generates a next state variable for substitution when needed (i.e. when passing the model to a model checker).
+
+\paragraph*{Next operator} The Next function is an addition to the pySMT FormulaManager, it generates a new node containing the custom NEXT operator. It can be used on both symbols and more complex formulae of any type, with the only constraint that it cannot be used on formulae which already contain the Next symbol. This operators has several advantages:
+\begin{enumerate}
+    \item The user doesn't need to keep track of both curr and next state variables, since the latter can be generated from the former using the formula manager.
+    \item Explicit replacements with next state variables are not performed while generating a next state formula, making debugging easier.
+    \item Models are simpler to interoperate.
+\end{enumerate}
+
+\inputminted[firstline=1, lastline=19]{python}{py/modelling.py}
+
 \section{Inputs}
+Inputs are variables which behave in a non-deterministic way. They can be used to model an external system, an action to which the model must react, or as placeholder when combining multiple transition systems.
+Just like for state variables, inputs can be added using the add\_input\_variable method or using the create\_input\_variable helper method.
+
+\inputminted[firstline=21, lastline=31]{python}{py/modelling.py}
+
 \section{Constraints}
+Constraints define how the initial state is selected from the space of possible states, as well as whether a transition between two states is possible limiting how the model may evolve.
+
+\paragraph*{Init constraints}
+The initial state of the model depends on the init constraints, which can be added using the add\_init method.
+A state can be selected as initial only if it satisfies all of the init formulae.
+The list of init constraints is available using the get\_init\_constraints method, and they can be combined into a single formula using the get\_init\_constraint method.
+Variables used in an init constraint must be variables of the curr state, therefore the Next operator may not appear in an init formula.
+
+\inputminted[firstline=33, lastline=38]{python}{py/modelling.py}
+
+\paragraph*{Trans constraints}
+Transitions between one state and the next depend on the trans constraints, which can be added using the add\_trans method.
+A transition between two states is possible only if it satisfies all of the trans formulae.
+Just like for the init constraints, trans constraints can be obtained using the get\_trans\_constraints method, or combined into a conjunction using the get\_trans\_constraint method.
+
+\inputminted[firstline=40, lastline=63]{python}{py/modelling.py}
+
+\paragraph*{Invar constraints}
+Invariants are formulae which are true in the initial state, as well as every succeeding state.
+The add\_invar helper method can be used to quickly model such constraints, in which case init and trans constraints are added with a single call.
+Since invariant constraints require adding an init constraint, next state variables cannot be present in them.
+
+\paragraph*{Frozen variables}
+Frozen variables are variables which never change in the course of the execution.
+They can be useful to represent parameters which affect the behavior of the state machine, but are fixed once their value is initialized.
+The create\_frozen\_var helper method can be used to create such a variable directly without having to specify the transition constraint by which it evolves. It can be combined with a call to add\_init to specify a set or a range of values which it can assume.
+
 \section{Properties}
+Properties do not determine the states of the model or how it evolves, they instead correspond to some condition which we want to verify.
+Just like in VMT-LIB there are 3 kinds of properties in PyVmt: invar, live, and LTL.
+Adding a property directly to the model can be useful for serialization and model checking.
+
+\paragraph*{Invariant properties}
+Invariant properties are the simplest, they specify that a formula has to be verified in the initial state and all subsequent states.
+They correspond in LTL to the formula \begin{math} G\ \phi \end{math}.
+A counterexample to such a property is just an execution path that starts at the initial state and after a certain amount of steps (possibly 0) reaches a state where the formula no longer holds.
+The method for adding an invariant property is add\_invar\_property, it optionally accepts an index for the property.
+
+\inputminted[firstline=66, lastline=73]{python}{py/modelling.py}
+
+\paragraph*{Live properties}
+Live properties specify that eventually, a formula will always hold.
+They correspond in LTL to the formula \begin{math} F\ G\ \phi \end{math}.
+A counterexample to such a property is an execution path where the negated formula is verified, namely \begin{math} G\ F \lnot \phi \end{math} which means that the negated version of \begin{math} \phi \end{math} has to happen infinitely often.
+To add a live property the method add\_live\_property may be used, it optionally accepts an index for the property.
+
+\inputminted[firstline=76, lastline=83]{python}{py/modelling.py}
+
+\paragraph*{LTL properties}
+
+LTL properties can represent more complex properties using LTL operators.
+The following LTL operators are supported in PyVmt, and can be used through the PyVmt custom formula manager:
+\begin{itemize}
+    \item \begin{math} X \phi \end{math}: \begin{math} \phi \end{math} has to be verified in the neXt state
+    \item \begin{math} F \phi \end{math}: \begin{math} \phi \end{math} has to be verified eventually, in some Future state
+    \item \begin{math} G \phi \end{math}: \begin{math} \phi \end{math} is Globally verified, that is, it's verified in every state
+    \item \begin{math} \phi\ U\ \psi \end{math}: \begin{math} \phi \end{math} must remain verified at least Until \begin{math} \psi \end{math} is verified
+    \item \begin{math} \phi\ R\ \psi \end{math}: \begin{math} \phi \end{math} Releases \begin{math} \psi \end{math}, meaning that \begin{math} \psi \end{math} has to hold at least as long as \begin{math} \phi \end{math} doesn't hold
+\end{itemize}
+Formulae containing LTL properties may be added to a model through the add\_ltl\_property method, it optionally accepts an index for the property.
+
