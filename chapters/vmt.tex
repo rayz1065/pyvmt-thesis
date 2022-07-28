@@ -1,16 +1,25 @@
 \chapter{Verification modulo theory}
 
+\paragraph*{SMT}
 Satisfiability modulo theory is a generalization of the SAT (boolean satisfiability) problem, it involves proving whether a formula can be satisfied by some assignment of the variables. The expressions which can include lists, arrays, bit vectors, and strings are interpreted within a formal theory. There exists a standard language for defining SMT problems called SMT-LIB \cite{SMT-LIB} and it allows simpler interfacing to the solvers, which are the programs developed to decide whether a formula is satisfiable.
 
-Verification modulo theory adds to that the verification of transition systems.
-Transition systems be represented as a Kripke structure %...
-\begin{math}
-    \phi(S, S0)
-\end{math}
+\paragraph*{VMT}
+Verification modulo theory adds a dynamic aspect to SMT, allowing the specification of transition systems. In VMT transition systems are defined in a symbolic manner, they're composed of several elements:
+\begin{itemize}
+    \item State variables
+    \item An init constraint
+    \item A transition constraint
+\end{itemize}
+States are therefore not explicitly expressed, rather the assignments to the state variables may be used to encode them. The transition between states is regulated by a transition constraint, which is a function between current and next state variables and must be verified during a transition. The set of initial states is also not explicit, initial states must verify the init constraint.
 
 
 \section{Some verification modulo theory problems}
 Problems in verification modulo theory include %...
+% safety...
+% justice...
+% liveness...
+% LTL...
+% decision problems...
 
 \section{Importance of verification modulo theory}
 Verification modulo theory is important because %...
@@ -23,8 +32,10 @@ It is designed with a limited amount of language constructs, aiming for simplici
     \item \textbf{:next name} is used to specify state variables. To define a state variable, two variables are created, one representing the current state and one representing the next state. The next annotation is used to link the next state variable to the current state variable.
     \item \textbf{:init} is used to specify the formula used to constrain the initial states for the system.
     \item \textbf{:trans} is used to specify the formula used to constrain the transitions from each state to the next for the system.
-    \item \textbf{:invar-property idx} is used to specify an invariant property to be verified, in LTL it's in the form \begin{math} G (f) \end{math} and requires a formula to always hold.  A unique non-negative integer specifies the index of the property.
-    \item \textbf{:live-property idx} is used to specify a live property to be verified, in LTL it's in the form \begin{math} F (G (f))\end{math} and requires a formula to hold infinitely often. A unique non-negative integer specifies the index of the property.
+    \item \textbf{:invar-property idx} is used to specify an invariant property to be verified, in LTL it's in the form \begin{math} G \phi \end{math} and requires a formula to always hold.  A unique non-negative integer specifies the index of the property.
+    \item \textbf{:live-property idx} is used to specify a live property to be verified, in LTL it's in the form \begin{math} F\ G\ \phi\end{math} and requires a formula to hold infinitely often. A unique non-negative integer specifies the index of the property.
 \end{itemize}
 \cite{vmt-lib-paper} %...
+
+% execution paths...
 
