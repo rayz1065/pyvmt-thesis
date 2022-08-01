@@ -1,4 +1,5 @@
 import sys
+from pyvmt.model import Model
 from pyvmt.vmtlib.reader import read
 from pyvmt.shortcuts import Next
 from pyvmt.solvers.ic3ia import Ic3iaSolver
@@ -31,3 +32,7 @@ for solver_class in [Ic3iaSolver, NuxmvSolver]:
     res = solver.check_property_idx(0)
     safe_str = 'safe' if res.is_safe() else 'not safe'
     print('property is', safe_str, 'according to', solver_class.__name__)
+
+# write to VMT-LIB
+# serialize the modified model
+model.serialize(sys.stdout)
