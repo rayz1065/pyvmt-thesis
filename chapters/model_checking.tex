@@ -1,12 +1,74 @@
 \chapter{Model checking in PyVmt}
-PyVmt supports several model checkers and provides\dots %...
+PyVmt supports several model checkers and provides a layer of abstraction to interface with them. Through a model checker it is possible to know whether the properties specified over a model are verified.
 
+Running a model checker over a model in PyVmt is done through the following steps:
+\begin{enumerate}
+    \item Read or create a new model
+    \item Create a new instance of the preferred solver
+    \item Optionally modify the options for the solver
+    \item Formulate a property and either add it to the model or pass it directly to one of the helper methods available for the model checker
+    \item Analyze the result
+\end{enumerate}
+
+\inputminted[firstline=5, lastline=20]{python3}{py/model_checking.py}
+
+Typically to run a solver, PyVmt creates a temporary file and stores in it the model with the property it's trying to check.
+After that, it creates a subprocess using \mintinline{python3}{subprocess.run}, and passing the options either through command line arguments or through the standard input.
+Finally, the output from the model checker is analyzed and returned.
 
 \section{Available solvers}
 
-\paragraph{nuXmv}
+\paragraph*{nuXmv}
+NuXmv is an extension of NuSMV and is capable of checking synchronous finite and infinite state systems. \cite{DBLP:conf/cav/CavadaCDGMMMRT14}
+NuXmv has its own input format based on the language for NuSMV, but it is also possible to pass directly VMT-LIB thanks to its read\_vmt\_model command.
+Several algorithms are available for model checking and both invariants and live properties are supported.
+The logic supported by nuXmv depends on the chosen algorithm since algorithms working with interpolants do not support having both integer and real arithmetic. Complex logics containing arrays, BitVectors, integer and real arithmetic are otherwise supported.
+
+Options are passed to the solver through the standard input as commands, the output is parsed through the use of regular expressions.
+
+\paragraph*{Ic3ia}
+Ic3ia utilizes implicit abstraction to verify the safety of properties over infinite state systems \cite{10.1007/978-3-319-41528-4_15}.
+It supports VMT-LIB directly since it's the only format which it reads, and allows for both invariant and live properties.
+Ic3ia supports linear arithmetic formulae which can contain integer and real arithmetic combined through boolean conditions.
+
+The output from the solver may contain a counterexample encoded as a series of steps, each of which is a conjunction of assignments in SMT-LIB format. To parse the counterexample, the SmtLibParser class is employed.
+
+\paragraph*{EUForia}
+EUForia is a model checker which works through abstraction-refinement to prove a property or find a feasible abstract counterexample that disproves it. \cite{10.1007/978-3-030-11245-5_17}.
+The VMT-LIB format is supported directly by EUForia as its input format and it allows for invariant properties.
+EUForia supports formulae containing BitVectors and arrays, it does not on the other hand support linear or real arithmetic.
+
+For unsafe properties a counterexample is given. It consists of a list of function declarations each corresponding to a symbol in the original model and the index of a step, they contain the assignment to the symbol in the specified step. Again, the SmtLibParser is used to parse the result.
+
 
 \section{Results}
+Results from model checking are parsed from PyVmt and returned as an object of class Result.
+This allows accessing the information regarding the produced output without requiring parsing it on the user's side.
+
+Typically results specify whether the checked property is safe or unsafe, in the case of an unsafe property a counterexample in the form of a trace may be produced.
 
 \section{Traces}
+Whenever a property is not verified, a model checker may provide a counterexample corresponding to a series of steps that lead the system to an unsafe state.
+The output from different model checkers is usually not consistent, but PyVmt offers a uniform interface for reading a trace produced by any of the supported model checkers.
+
+In PyVmt traces are modelled as a series of steps, each of which consists of a mapping between the state variables and their values at the step.
+Traces may also contain an infinite amount of steps (for example when working with live properties).
+One of the possible modelling approaches is used in which exactly one of the steps is a loopback step: after the last step in the series the trace loops back to this step and continues infinitely.
+
+\paragraph*{Iterating through a trace}
+PyVmt offers many methods for reading the information relating to a trace, it's possible to retrieve every step using the get\_steps method, or a specific step using get\_step method passing the step index.
+
+From each step, the previous and the next step are also available using the get\_next\_step and get\_prev\_step methods.
+
+\inputminted[firstline=22, lastline=39]{python3}{py/model_checking.py}
+
+\paragraph*{Comparing steps}
+It's not always important to read every variable on each step, sometimes just the ones which are changing or which have changed since the last step may be more useful.
+The Trace class implements methods to perform this comparisons automatically which are get\_changing\_variables and get\_changed\_variables.
+
+\inputminted[firstline=41, lastline=48]{python3}{py/model_checking.py}
+
+\paragraph*{Evaluating formulae}
+
+\paragraph*{Loopback step}
 
