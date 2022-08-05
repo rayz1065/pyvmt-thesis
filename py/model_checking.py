@@ -44,8 +44,15 @@ if res.is_unsafe() and res.has_trace():
         print(';; step', step.step_idx)
         next_step = step.get_next_step()
         for stvar in step.get_changing_variables():
-            print(stvar, 'from', step.get_assignment(stvar), 'to', next_step.get_assignment(stvar))
+            print(stvar, 'from', step.get_assignment(stvar),
+                  'to', next_step.get_assignment(stvar))
         print()
+
+    # compare first and last step
+    step = trace.get_step(0)
+    last_step = trace.get_step(trace.steps_count() - 1)
+    diff = step.get_different_variables(last_step)
+    print('From first to last step different variables are', diff)
 
     if trace.has_loopback_step():
         loopback_step = trace.get_loopback_step()
