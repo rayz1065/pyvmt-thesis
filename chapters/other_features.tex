@@ -1,4 +1,23 @@
 \chapter{Other features}
 
 \section{Merging transition systems}
+\paragraph*{Synchronous compositions}
+Composing transition systems by means of synchronous composition involves having the two systems evolve by means of transition at the same time.
+This differs from asynchronous composition where at each step, exactly one of the systems is chosen to evolve independently of the other.
+For symbolic transition systems, synchronous composition means creating a transition system that includes all of the state and input variables of the original systems, and constraining the system so that the initial states are valid initial states for both transition systems, and the transitions are valid transitions for both transition systems.
+This can simply be done by means of conjunction between the original constraints.
+
+Merging symbolic transition systems through synchronous composition in PyVmt can be done using the compose function, which takes as input two models and returns the resulting model.
+It was decided to keep the functionality as simple as possible, in order to avoid behaviors which the user might not expect like having the variables change to fresh ones as the systems are merged.
+For that reason, whenever a state variable and/or an input coincide, they're considered the same variable in the final system.
+This can be useful to make the two models communicate by replacing a nondeterministic input variable with a constrained state variable as defined from another model.
+
+\inputminted[firstline=9, lastline=33]{python3}{py/composition.py}
+
 \section{Renaming transition systems}
+It may be necessary to rename the variable contained within a model to avoid having an overlap with the variables of another model when using synchronous composition.
+PyVmt offers a model renamer to simplify such a process, with several utility functions that implement a specific renaming pattern, while allowing the user to also specify a custom renaming callback by using the rename function.
+The patterns which are available act on the prefix and suffix of each of the input and state variables, allowing the addition or replacement of the prefix/suffix.
+
+\inputminted[firstline=9, lastline=41]{python3}{py/renaming.py}
+
