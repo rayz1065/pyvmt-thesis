@@ -1,9 +1,43 @@
 \chapter{Verification modulo theory}
 
-\paragraph*{SMT}
-Satisfiability modulo theory is a generalization of the SAT (boolean satisfiability) problem. It involves proving whether a formula can be satisfied by some assignment of the variables. The expressions, which can include lists, arrays, bit vectors, and strings are interpreted within a formal theory. There exists a standard language for defining SMT problems called SMT-LIB \cite{SMT-LIB} and it simplifies interfacing to the solvers, which are the programs developed to decide whether a formula is satisfiable.
+\section{Software verification}
+The classical approach for finding and resolving bugs in software usually involves writing tests and code reviews done by other developers.
+The safety of a system tested in this manner is not guaranteed since only a limited amount of scenarios can be explored, and subtle bugs may go unnoticed even after peer-review.
+A mathematical approach is therefore necessary whenever such guarantees are required, for example when dealing with complex, safety-critical systems where bugs may have severe repercussions and are therefore not acceptable.
+
+There are multiple approaches to mathematically formalizing a program, one of them is representing it as a transition system, that is, a model utilizing states and transitions between the states.
+Transition systems can also be thought of as directed graphs, where each node is a state and the branches connecting the states are the possible transitions.
+After representing a program in a formal manner, it is possible to specify some property which we want the system to respect and, because of the mathematical formalization, proving such specifications becomes possible using some specialized program called model checker.
+% For these applications, software may be written utilizing a formal language, allowing for model checking to be applied in order to formally verify some properties corresponding to the specifications.
+
+\paragraph*{Futurebus+}
+The verification of the IEEE Futurebus+ cache coherence protocol \cite{futurebus-plus} is regarded as the first time formal methods were applied to verify the correctness of an IEEE protocol.
+The approach to verification required constructing a model using a formal language (SMV) and using it to show that the system satisfied the specifications.
+This research was also able to find errors within the original formulation that were previously unnoticed, thus demonstrating a practical industrial usage of formal methods in the definition of standards.
+
+\section{From SMT to VMT}
+
+Satisfiability modulo theory is a generalization of the SAT (boolean satisfiability) problem.
+It involves proving whether a formula can be satisfied by some assignment of the variables.
+The expressions, which can include lists, arrays, bit vectors, and strings are interpreted within a formal theory, for example, integer or real arithmetic.
+
+In recent years, research has intensified into developing programs that can solve the SMT problem, such as Z3, Yices, or MathSat, which are capable of proving whether such an assignment exists.
+A standard language for defining SMT problems is called SMT-LIB \cite{SMT-LIB} and is supported by many of the existing solvers.
+It simplifies interfacing to such programs by providing a uniform language to define the problems.
+
+\paragraph*{pySMT}
+A python library called pySMT \cite{pysmt2015} was created to provide a uniform interface for defining SMT formulae which does not rely on any specific solver.
+It also offers tools to interface with multiple built-in solvers, as well as any SMT-LIB compliant solver, which makes it a very efficient instrument to run multiple solvers on the same formulae and prototyping algorithms.
+One of the many strengths of pySMT is its extensibility, every feature is built in a manner which simplifies building new behaviors and changing existing ones and helpful guides and examples are present within the documentation that show how this may be done.
+
+Let's take for example the definition of formulae using pySMT. Every operation in pySMT is represented by a node, and each node can have many children which are its operands.
+Formulae can be created through the FormulaManager, a class which generates the formulae and ensures that if two formulae are the same, they will also be represented by the same python object making them indistinguishable.
+Using the \mintinline{python3}{new_node_type} function it's possible to create a new custom operator, and adding it to the FormulaManager is as simple as extending its class and creating a subclass with a method to generate the new node.
+Another key concept within pySMT are formula walkers, which are tools to visit every node within a formulae and may be used, for example, to infer the type of a node, or to apply some transformation to the formula.
+All formula walkers within pySMT are extensible through the same process of class extension, therefore the behavior of the new operators can be specified for every walker simplifying the process of formula manipulation.
 
 \paragraph*{VMT}
+
 Verification modulo theory adds a dynamic aspect to SMT, allowing the specification of transition systems. In VMT, transition systems are defined in a symbolic manner, they're composed of several elements:
 \begin{itemize}
     \item State variables
@@ -14,15 +48,11 @@ States are therefore not explicitly expressed, rather the assignments to the sta
 This has the advantage of allowing for transition systems with an extremely large number of states, and is frequently a more natural way to define their behavior.
 The transition between states is regulated by a transition constraint, which is a function between current and next state variables and must be verified during a transition. The set of initial states is also not explicit, initial states must verify the init constraint.
 
+Using pySMT it's possible to represent all of these elements thanks to the FormulaManager and the library's extensibility, but it would be useful to have a layer of abstraction that stores the data and deals with common operations that may be performed.
+This is the main motivation behind PyVmt, to work as an extension of pySMT making use of its powerful formula manipulation capabilities, and offering some extra features that simplify prototyping and verifying models. These will be discussed in detail within the next chapters.
 
-\section{Importance of model checking}
-The classical approach for finding and resolving bugs in software usually involves writing tests and code reviews done by other developers.
-The safety of a system tested in this manner is not guaranteed since only a limited amount of scenarios can be explored, and subtle bugs may go unnoticed even after peer-review.
-A mathematical approach is therefore necessary whenever such guarantees are required, for example when dealing with complex, safety-critical systems where bugs may have severe repercussions and are therefore not acceptable.
 
-For these applications, software may be written utilizing a formal language, allowing for model checking to be applied in order to formally verify some properties corresponding to the specifications.
-
-\section{Some applications}
+\section{Some types of verification problems}
 Many different problems can be solved by using a verification tool, the following paragraphs include a few relevant ones.
 
 \paragraph*{LTL} LTL or Linear Temporal Logic is used to define complex properties over execution sequences of the system.
@@ -65,18 +95,4 @@ Once modelled, the solution can be found as a counterexample to the property:
 \end{math}.
 The resulting counterexample displays which entities have to be carried across the river and back in each step.
 
-\section{The VMT-LIB format}
-VMT-LIB is an extension of the SMT2 format and provides a standard interface for defining transition systems by exploiting the possibility to attach annotations to terms and formulas, which can be used to specify the model behaviors. \cite{VMT-LIB}
-
-It is designed with a limited amount of language constructs, aiming for simplicity for anyone interested in implementing the language within their VMT solver:
-\begin{itemize}[noitemsep]
-    \item \textbf{:next name} is used to specify state variables. To define a state variable, two variables are created, one representing the current state and one representing the next state. The next annotation is used to link the next state variable to the current state variable.
-    \item \textbf{:init} is used to specify the formula used to constrain the initial states for the system.
-    \item \textbf{:trans} is used to specify the formula used to constrain the transitions from each state to the next for the system.
-    \item \textbf{:invar-property idx} is used to specify an invariant property to be verified, in LTL it's in the form \begin{math} G \phi \end{math} and requires a formula to always hold.  A unique non-negative integer specifies the index of the property.
-    \item \textbf{:live-property idx} is used to specify a live property to be verified, in LTL it's in the form \begin{math} F\ G\ \phi\end{math} and requires a formula to hold infinitely often. A unique non-negative integer specifies the index of the property.
-\end{itemize}
-\cite{vmt-lib-paper} %...
-
-% execution paths...
 

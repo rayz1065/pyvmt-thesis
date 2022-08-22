@@ -1,5 +1,20 @@
 \chapter{VMT-LIB support}
-PyVmt modelling system is similar to that of VMT-LIB so that it may easily convert a model to and from VMT-LIB.
+
+\section{The VMT-LIB format}
+VMT-LIB is an extension of the SMT2 format and provides a standard interface for defining transition systems by exploiting the possibility to attach annotations to terms and formulas, which can be used to specify the model behaviors. \cite{vmt-lib-paper}
+
+It is designed with a limited amount of language constructs, aiming for simplicity for anyone interested in implementing the language within their VMT solver:
+\begin{itemize}
+    \item \textbf{:next name} is used to specify state variables. To define a state variable, two variables are created, one representing the current state and one representing the next state. The next annotation is used to link the next state variable to the current state variable.
+    \item \textbf{:init} is used to specify the formula used to constrain the initial states for the system.
+    \item \textbf{:trans} is used to specify the formula used to constrain the transitions from each state to the next for the system.
+    \item \textbf{:invar-property idx} is used to specify an invariant property to be verified, in LTL it's in the form \begin{math} G \phi \end{math} and requires a formula to always hold.  A unique non-negative integer specifies the index of the property.
+    \item \textbf{:live-property idx} is used to specify a live property to be verified, in LTL it's in the form \begin{math} F\ G\ \phi\end{math} and requires a formula to hold infinitely often. A unique non-negative integer specifies the index of the property.
+\end{itemize}
+
+An in-depth explanation of the format, including a list of available tools may be found on the VMT-LIB website. \cite{VMT-LIB}
+
+PyVmt modelling system is similar to that of VMT-LIB making converting to and from the format simpler.
 This allows for higher interoperability since a model created in PyVmt may be serialized to VMT-LIB and be used in a model checker which isn't supported by the library.
 
 \section{Reading}

@@ -1,5 +1,4 @@
 import sys
-from pyvmt.model import Model
 from pyvmt.vmtlib.reader import read
 from pyvmt.shortcuts import Next
 from pyvmt.solvers.ic3ia import Ic3iaSolver
@@ -7,6 +6,7 @@ from pyvmt.solvers.nuxmv import NuxmvSolver
 from pysmt.exceptions import PysmtSyntaxError
 from pysmt import typing
 from pysmt.shortcuts import Int, Equals, Plus
+
 
 try:
     model = read(sys.stdin)
