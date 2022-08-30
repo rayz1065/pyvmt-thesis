@@ -27,6 +27,7 @@ model.add_trans(Ite(enable_b,
     Equals(Next(b), b)
 ))
 
+# Model contains 2 counters, a from 0 to 3, and b from 0 to 2
 ab_sum = Plus(a, b)
 model.add_invar_property(LT(ab_sum, Int(5))) # sum never reaches 5
 

@@ -1,8 +1,8 @@
-\chapter{Model checking in PyVmt}
+\chapter{Model checking in \pyvmt{}}
 \label{ch:model-checking}
-PyVmt supports several model checkers and provides a layer of abstraction to interface with them. Through a model checker it is possible to know whether the properties specified over a model are verified.
+\pyvmt{} supports several model checkers and provides a layer of abstraction to interface with them. Through a model checker it is possible to know whether the properties specified over a model are verified.
 
-Running a model checker over a model in PyVmt is done through the following steps:
+Running a model checker over a model in \pyvmt{} can be done entirely within \python{} code through the following steps:
 \begin{enumerate}
     \item Read or create a new model
     \item Create a new instance of the preferred solver
@@ -11,88 +11,95 @@ Running a model checker over a model in PyVmt is done through the following step
     \item Analyze the result
 \end{enumerate}
 
-\inputminted[firstline=5, lastline=20]{python3}{py/model_checking.py}
+\begin{listing}[h]
+    \label{alg:model-checking-steps}
+    \inputmintedpy{py/model_checking.py}{5}{20}
+    \caption{A snippet of code showcasing the steps which can be used to read a model from the standard input and check its first property using \iceia{}.}
+\end{listing}
 
-Typically to run a solver, PyVmt creates a temporary file and stores in it the model with the property it's trying to check.
-After that, it creates a subprocess using \mintinline{python3}{subprocess.run}, and passing the options either through command line arguments or through the standard input.
-Finally, the output from the model checker is analyzed and returned.
+Typically to run a solver, \pyvmt{} creates a temporary file and stores in it the model with the property it's trying to check.
+After that, it creates a subprocess using \texttt{subprocess.run}, and passing the options either through command line arguments or through the standard input.
+Finally, the output from the model checker is parsed and returned to the user.
 
 \section{Available solvers}
 
-\paragraph*{nuXmv}
-NuXmv is an extension of NuSMV and is capable of checking synchronous finite and infinite state systems. \cite{DBLP:conf/cav/CavadaCDGMMMRT14}
-NuXmv has its own input format based on the language for NuSMV, but it is also possible to pass directly VMT-LIB thanks to its read\_vmt\_model command.
+\paragraph*{\nuxmv{}.}
+\nuxmv{} is an extension of \nusmv{} and is capable of checking synchronous finite and infinite state systems \cite{DBLP:conf/cav/CavadaCDGMMMRT14}.
+\nuxmv{} has its own input format based on the language for \nusmv{}, but it is also possible to pass directly \vmtlib{} thanks to its \texttt{read\_vmt\_model} command.
 Several algorithms are available for model checking and both invariants and live properties are supported.
-The logic supported by nuXmv depends on the chosen algorithm since algorithms working with interpolants do not support having both integer and real arithmetic. Complex logics containing arrays, BitVectors, integer and real arithmetic are otherwise supported.
+The logic supported by \nuxmv{} depends on the chosen algorithm since algorithms working with interpolants do not support having both integer and real arithmetic at the same time.
+Complex logics containing arrays, BitVectors, integer and real arithmetic are otherwise supported.
 
 Options are passed to the solver through the standard input as commands, the output is parsed through the use of regular expressions.
 
-\paragraph*{Ic3ia}
-Ic3ia utilizes implicit abstraction to verify the safety of properties over infinite state systems \cite{10.1007/978-3-319-41528-4_15}.
-It supports VMT-LIB directly since it's the only format which it reads, and allows for both invariant and live properties.
-Ic3ia supports linear arithmetic formulae which can contain integer and real arithmetic combined through boolean conditions.
+\paragraph*{\iceia{}.}
+\iceia{} utilizes implicit abstraction to verify the safety of properties over infinite state systems \cite{10.1007/978-3-319-41528-4_15}.
+It supports \vmtlib{} directly since it's the only format which it reads, and allows for both invariant and live properties.
+\iceia{} supports linear arithmetic formulae which can contain integer and real arithmetic combined through boolean conditions.
 
-The output from the solver may contain a counterexample encoded as a series of steps, each of which is a conjunction of assignments in SMT-LIB format. To parse the counterexample, the SmtLibParser class is employed.
+The output from the solver may contain a counterexample encoded as a series of steps, each of which is a conjunction of assignments in \smtlib{} format. To parse the counterexample, the \texttt{SmtLibParser} class is employed.
 
-\paragraph*{EUForia}
-EUForia is a model checker which works through abstraction-refinement to prove a property or find a feasible abstract counterexample that disproves it. \cite{10.1007/978-3-030-11245-5_17}.
-The VMT-LIB format is supported directly by EUForia as its input format and it allows for invariant properties.
-EUForia supports formulae containing BitVectors and arrays, it does not on the other hand support linear or real arithmetic.
+\paragraph*{\euforia{}.}
+\euforia{} is a model checker which works through abstraction-refinement to prove a property or find a feasible abstract counterexample that disproves it \cite{10.1007/978-3-030-11245-5_17}.
+The \vmtlib{} format is supported directly by \euforia{} as its input format and it allows for invariant properties.
+\euforia{} supports formulae containing BitVectors and arrays, it does not on the other hand support linear or real arithmetic.
 
-For unsafe properties a counterexample is given. It consists of a list of function declarations each corresponding to a symbol in the original model and the index of a step, they contain the assignment to the symbol in the specified step. Again, the SmtLibParser is used to parse the result.
+For unsafe properties a counterexample is given. It consists of a list of function declarations each corresponding to a symbol in the original model and the index of a step, they contain the assignment to the symbol in the specified step. Again, the \texttt{SmtLibParser} is used to parse the result.
 
 
 \section{Results}
-Results from model checking are parsed from PyVmt and returned as an object of class Result.
+Results from model checking are parsed from \pyvmt{} and returned as an object of class \texttt{Result}.
 This allows accessing the information regarding the produced output without requiring parsing it on the user's side.
 
 Typically results specify whether the checked property is safe or unsafe, in the case of an unsafe property a counterexample in the form of a trace may be produced.
 
 \section{Traces}
 Whenever a property is not verified, a model checker may provide a counterexample corresponding to a series of steps that lead the system to an unsafe state.
-The output from different model checkers is usually not consistent, but PyVmt offers a uniform interface for reading a trace produced by any of the supported model checkers.
+The output from different model checkers is usually not consistent, but \pyvmt{} offers a uniform interface for reading a trace produced by any of the supported model checkers.
 
-In PyVmt traces are modelled as a series of steps, each of which consists of a mapping between the state variables and their values at the step.
+In \pyvmt{} traces are modelled as a series of steps, each of which consists of a mapping between the state variables and their values at the step.
 Traces may also contain an infinite amount of steps (for example when working with live properties).
 One of the possible modelling approaches is used in which exactly one of the steps is a loopback step: after the last step in the series the trace loops back to this step and continues infinitely.
 
-\paragraph*{Iterating through a trace}
-PyVmt offers many methods for reading the information relating to a trace, it's possible to retrieve every step using the get\_steps method, or a specific step using get\_step method passing the step index.
+\paragraph*{Iterating through a trace.}
+\pyvmt{} offers many methods for reading the information relating to a trace, it's possible to retrieve every step using the \texttt{get\_steps} method, or a specific step using \texttt{get\_step} method passing the step index.
 
-From each step, the previous and the next step are also available using the get\_next\_step and get\_prev\_step methods.
+From each step, the previous and the next step are also available using the \texttt{get\_next\_step} and \texttt{get\_prev\_step} methods.
 
-\inputminted[firstline=22, lastline=39]{python3}{py/model_checking.py}
-
-\paragraph*{Comparing steps}
+\paragraph*{Comparing steps.}
 It's not always important to read every variable on each step, sometimes just the ones which are changing or which have changed since the last step may be more useful.
-The Trace class implements methods to perform this comparisons automatically which are get\_changing\_variables and get\_changed\_variables.
+The \texttt{TraceStep} class implements methods to perform this comparisons automatically which are \texttt{get\_changing\_variables} and \texttt{get\_changed\_variables}.
 
-\inputminted[firstline=41, lastline=48]{python3}{py/model_checking.py}
+Comparing two specific steps is also possible thanks to the \texttt{get\_different\_variables} method of the Step.
 
-Comparing two specific steps is also possible thanks to the get\_different\_variables method of the Step.
+\paragraph*{Loopback step.}
+For traces with infinite steps a loopback step is present. A trace can only have one loopback step and it can be obtained with the \texttt{get\_loopback\_step} method.
 
-\inputminted[firstline=51, lastline=55]{python3}{py/model_checking.py}
+\begin{listing}
+    \label{alg:model-checking-traces}
+    \inputmintedpy{py/model_checking.py}{22}{46}
+    \caption{The trace from the previous example is printed and analyzed in various ways, \pyvmt{} allows for a variety of operations to access the trace and compare the steps.}
+\end{listing}
 
-\paragraph*{Loopback step}
-For traces with infinite steps a loopback step is present. A trace can only have one loopback step and it can be obtained with the get\_loopback\_step method.
-
-\inputminted[firstline=57, lastline=59]{python3}{py/model_checking.py}
-
-\paragraph*{Evaluating formulae}
+\paragraph*{Evaluating formulae.}
 To analyze a counterexample it may be useful to evaluate some formula over certain steps of the trace, or over pairs of states to verify the behavior during transitions.
 
-To aid this kind of computation the Step class contains an evaluate\_formula method which takes as input some arbitrary pySMT formula and evaluates it.
-To use this feature over a transition it is also possible to pass a formula containing the Next operator, the value for a next state variable will then be taken from the next step.
+To aid this kind of computation the \texttt{TraceStep} class contains an \texttt{evaluate\_formula} method which takes as input some arbitrary \pysmt{} formula and evaluates it.
+To use this feature over a transition it is also possible to pass a formula containing the \texttt{Next} operator, the value for a next state variable will then be taken from the next step.
 
 The evaluation consists of the following steps:
 \begin{enumerate}
-    \item Next operators are pushed to the leaves to allow for substitution of next state variables
+    \item \texttt{Next} operators are pushed to the leaves to allow for substitution of next state variables
     \item Substitutions for the symbols are produced, from current and next step if available
     \item The calculated substitutions are applied over the formula
-    \item The formula simplifier is applied over the formula
+    \item The \texttt{FormulaSimplifier} is used in order to evaluate the formula
 \end{enumerate}
 
-If the formula can be simplified completely the result will simply be a single node containing a constant value.
+If the formula can be simplified completely the result will simply be a single \texttt{FNode} containing a constant value.
 
-\inputminted[firstline=7]{python3}{py/formula_evaluation.py}
+\begin{listing}[H]
+    \label{alg:model-checking-evaluation}
+    \inputmintedpy{py/formula_evaluation.py}{30}{53}
+    \caption{Model containing two counters, one from 0 to 3 and one from 0 to 2. The property $\G (\mathrm{a} + \mathrm{b} < 5)$ is unsafe, and formula evaluation is used to analyze the resulting trace.}
+\end{listing}
 
