@@ -8,57 +8,44 @@ model = Model()
 # adding state variables manually
 a = Symbol('a', typing.INT)
 model.add_state_var(a)
-
 # using the helper function
 b = model.create_state_var('b', typing.BOOL)
 
 assert model.is_state_variable(a)
 assert model.is_state_variable(b)
-
 print(model.get_state_vars()) # [a, b]
 print(model.next(a))          # (a)'
 
 # adding input variables manually
 toggle = Symbol('toggle', typing.BOOL)
 model.add_input_var(toggle)
-
 # using the helper function
 counter_max = model.create_input_var('counter_max', typing.INT)
 
 assert model.is_input_variable(toggle)
 assert model.is_input_variable(counter_max)
-
 print(model.get_input_vars()) # [toggle, counter_max]
 
 # adding init constraints
 model.add_init(Equals(a, Int(-1)))
 model.add_init(b)
-
 print(model.get_init_constraints()) # [(a == 0), b]
 print(model.get_init_constraint())  # ((a == 0) & b)
 
 # adding trans constraints
-model.add_trans(
-    Equals(Next(a),
-        #  b => a' = (a + 1) % counter_max
-        # ~b => a' = a
-        Ite(b,
-            Ite(
-                LT(a, counter_max),
-                Plus(a, Int(1)),
-                Int(0)
-            ), a
-        )
+model.add_trans(Equals(Next(a),
+    #  b => a' = (a + 1) % counter_max
+    # !b => a' = a
+    Ite(b,
+        Ite(LT(a, counter_max), Plus(a, Int(1)), Int(0)),
+        a
     )
-)
-model.add_trans(
+))
+model.add_trans(Iff(Next(b),
     #  toggle => b' = ~b
     # ~toggle => b' = b
-    Iff(Next(b),
-        Ite(toggle, Not(b), b)
-    )
+    Ite(toggle, Not(b), b))
 )
-
 print(model.get_trans_constraints()) # List of the 2 constraints
 print(model.get_trans_constraint())  # Conjunction of the constraints
 

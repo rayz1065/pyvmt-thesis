@@ -1,4 +1,5 @@
 \chapter{Model checking in PyVmt}
+\label{ch:model-checking}
 PyVmt supports several model checkers and provides a layer of abstraction to interface with them. Through a model checker it is possible to know whether the properties specified over a model are verified.
 
 Running a model checker over a model in PyVmt is done through the following steps:
@@ -94,3 +95,4 @@ The evaluation consists of the following steps:
 If the formula can be simplified completely the result will simply be a single node containing a constant value.
 
 \inputminted[firstline=7]{python3}{py/formula_evaluation.py}
+
