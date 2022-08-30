@@ -1,0 +1,81 @@
+%% Calligraphic alphabet
+\newcommand*{\cA}{\ensuremath{\mathcal{A}}}
+\newcommand*{\cB}{\ensuremath{\mathcal{B}}}
+\newcommand*{\cC}{\ensuremath{\mathcal{C}}}
+\newcommand*{\cD}{\ensuremath{\mathcal{D}}}
+\newcommand*{\cE}{\ensuremath{\mathcal{E}}}
+\newcommand*{\cF}{\ensuremath{\mathcal{F}}}
+\newcommand*{\cG}{\ensuremath{\mathcal{G}}}
+\newcommand*{\cH}{\ensuremath{\mathcal{H}}}
+\newcommand*{\cI}{\ensuremath{\mathcal{I}}}
+\newcommand*{\cJ}{\ensuremath{\mathcal{J}}}
+\newcommand*{\cK}{\ensuremath{\mathcal{K}}}
+\newcommand*{\cL}{\ensuremath{\mathcal{L}}}
+\newcommand*{\cM}{\ensuremath{\mathcal{M}}}
+\newcommand*{\cN}{\ensuremath{\mathcal{N}}}
+\newcommand*{\cO}{\ensuremath{\mathcal{O}}}
+\newcommand*{\cP}{\ensuremath{\mathcal{P}}}
+\newcommand*{\cQ}{\ensuremath{\mathcal{Q}}}
+\newcommand*{\cR}{\ensuremath{\mathcal{R}}}
+\newcommand*{\cS}{\ensuremath{\mathcal{S}}}
+\newcommand*{\cT}{\ensuremath{\mathcal{T}}}
+\newcommand*{\cU}{\ensuremath{\mathcal{U}}}
+\newcommand*{\cV}{\ensuremath{\mathcal{V}}}
+\newcommand*{\cW}{\ensuremath{\mathcal{W}}}
+\newcommand*{\cX}{\ensuremath{\mathcal{X}}}
+\newcommand*{\cY}{\ensuremath{\mathcal{Y}}}
+\newcommand*{\cZ}{\ensuremath{\mathcal{Z}}}
+
+%% program, formats,...
+\newcommand*{\vmtlib}{\texttt{VMT-LIB}}
+\newcommand*{\smtlib}{\texttt{SMT-LIB}}
+\newcommand*{\vmt}{\texttt{VMT}}
+\newcommand*{\btor}{\texttt{BTOR2}}
+\newcommand*{\VMT}{Verification Modulo Theory}
+\newcommand*{\smt}{\texttt{SMT}}
+\newcommand*{\sat}{\texttt{SAT}}
+\newcommand*{\SMT}{Satisfiability Modulo Theory}
+\newcommand*{\smv}{\texttt{SMV}}
+\newcommand*{\ltl}{\texttt{LTL}}
+\newcommand*{\LTL}{Linear Temporal Logic}
+\newcommand*{\boolector}{\texttt{Boolector}}
+\newcommand*{\pysmt}{\texttt{pySMT}}
+\newcommand*{\pyvmt}{\texttt{PyVmt}}
+\newcommand*{\nuxmv}{\texttt{nuXmv}}
+\newcommand*{\nusmv}{\texttt{nuSMV}}
+\newcommand*{\yices}{\texttt{Yices}}
+\newcommand*{\zthree}{\texttt{Z3}}
+\newcommand*{\mathsat}{\texttt{MathSAT}}
+\newcommand*{\python}{Python}
+\newcommand*{\pytest}{PyTest}
+
+%% websites, organizations,...
+\newcommand*{\fbk}{FBK}
+\newcommand*{\FBK}{Fondazione Bruno Kessler}
+\newcommand*{\github}{GitHub}
+\newcommand*{\pypi}{PyPi}
+\newcommand*{\ieee}{IEEE}
+
+%% LTL
+\newcommand*{\F}{\ensuremath{\mathit{F}}}
+\newcommand*{\G}{\ensuremath{\mathit{G}}}
+\newcommand*{\R}{\ensuremath{\mathit{R}}}
+\newcommand*{\U}{\ensuremath{\mathit{U}}}
+\newcommand*{\X}{\ensuremath{\mathit{X}}}
+
+\newcommand*{\fF}{\ensuremath{\F{} \phi}}
+\newcommand*{\fG}{\ensuremath{\G{} \phi}}
+\newcommand*{\fR}{\ensuremath{\phi \R{} \psi}}
+\newcommand*{\fU}{\ensuremath{\phi \U{} \psi}}
+\newcommand*{\fX}{\ensuremath{\X{} \phi}}
+
+\newcommand*{\fsafe}{\ensuremath{\G{} \phi}}
+\newcommand*{\ffair}{\ensuremath{\G{} (\F{} \phi)}}
+\newcommand*{\flive}{\ensuremath{\F{} (\G{} \phi)}}
+
+%% styles
+\newcommand{\inputmintedpy}[3]{\inputminted[
+    firstline=#2, lastline=#3, frame=lines,
+    framesep=2mm, baselinestretch=1.2, bgcolor=LightGray,
+    fontsize=\footnotesize, linenos]{python3}{#1}
+}

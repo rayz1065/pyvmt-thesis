@@ -13,8 +13,16 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% formato FRONTE RETRO
-\documentclass[epsfig,a4paper,11pt,titlepage,twoside,openany]{book}
+% to compile for the version to print, uncomment \printtrue
+\newif\ifprint
+  % \printtrue
+
+\ifprint
+  \documentclass[epsfig,a4paper,11pt,titlepage,twoside,openright]{book}
+\else
+  % formato FRONTE RETRO
+  \documentclass[epsfig,a4paper,11pt,titlepage,twoside,openany]{book}
+\fi
 \usepackage{epsfig}
 \usepackage{plain}
 \usepackage{setspace}
@@ -22,7 +30,12 @@
 \usepackage{titlesec} % per formato custom dei titoli dei capitoli
 \usepackage{enumitem}
 \usepackage{minted}
+\usemintedstyle{pastie}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\definecolor{LightGray}{gray}{0.95}
 
+\input{macros}
 
 %%%%%%%%%%%%%%
 % supporto lettere accentate
@@ -82,10 +95,13 @@
           
     % gruppo per definizone di successione capitoli senza interruzione di pagina
     \begingroup
-      % nessuna interruzione di pagina tra capitoli
-      % ridefinizione dei comandi di clear page
-      \renewcommand{\cleardoublepage}{} 
-      \renewcommand{\clearpage}{} 
+      \ifprint
+      \else
+        % nessuna interruzione di pagina tra capitoli
+        % ridefinizione dei comandi di clear page
+        \renewcommand{\cleardoublepage}{} 
+        \renewcommand{\clearpage}{} 
+      \fi
       % redefinizione del formato del titolo del capitolo
       % da formato
       %   Capitolo X
@@ -101,7 +117,7 @@
       \titlespacing*{\subsection}{0pt}{0.10in}{0.02in}
       
       % sommario
-      \input{abstract}
+      \input{chapters/abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Nota
@@ -123,6 +139,7 @@
       %
       % \input oppure \include
       %
+      \input{chapters/introduction}
       \input{chapters/vmt}
       \input{chapters/modelling}
       \input{chapters/vmtlib_support}
