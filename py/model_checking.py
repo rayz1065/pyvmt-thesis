@@ -29,14 +29,6 @@ if res.is_unsafe() and res.has_trace():
         print(';;', step_type, step.step_idx)
         for var, val in step.get_assignments().items():
             print('>', var, '=', val)
-        print()
-
-    # get the first step
-    step = trace.get_step(0)
-    print(step.serialize_to_string())
-    if step.has_next_step():
-        step = step.get_next_step()
-        print('Step after the first one is', step.serialize_to_string())
 
     # get just the changing variables for each step
     steps = (step for step in trace.get_steps() if step.has_next_step())
@@ -46,14 +38,9 @@ if res.is_unsafe() and res.has_trace():
         for stvar in step.get_changing_variables():
             print(stvar, 'from', step.get_assignment(stvar),
                   'to', next_step.get_assignment(stvar))
-        print()
 
     # compare first and last step
     step = trace.get_step(0)
     last_step = trace.get_step(trace.steps_count() - 1)
     diff = step.get_different_variables(last_step)
     print('From first to last step different variables are', diff)
-
-    if trace.has_loopback_step():
-        loopback_step = trace.get_loopback_step()
-        print(loopback_step.serialize_to_string())
