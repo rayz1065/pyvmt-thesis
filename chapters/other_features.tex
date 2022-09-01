@@ -1,40 +1,5 @@
 \chapter{Other Features}
-
-\section{\ltl{} Encoding}
-\ltl{} properties aren't always supported directly by model checkers, but live properties together with an encoding of the original property into the model may be used as a replacement.
-While working on this thesis I implemented two \ltl{} encoding algorithms in \pyvmt{} by using \pysmt{}'s formula manipulation tools.
-
-\paragraph*{\ltltosmv{} encoding.}
-One of the classic encoding procedures for \ltl{} was proposed in 1994 in a paper titled "Another Look at \ltl{} Model Checking" \cite{Clarke1997}.
-This procedure involves creating a tableau associated with the negation of the \ltl{} formula, finding a set of elementary subformulas and for each of them a condition that defines whether that subformula is satisfied (characteristic function, here referred to as sat value).
-By composing the model with the tableau it's possible to analyze how the state of the \ltl{} specification changes as steps are performed on the original model.
-
-Elementary subformulae are defined for the \ltl{} operators \fX{} and \fU{}, therefore the first step for encoding is normalizing the negated formula through the \texttt{LtlRewriter} walker which performs the following substitutions:
-\begin{itemize}
-    \item \fR{} $\longrightarrow{}$ $\lnot(\lnot \phi \U \lnot \psi)$
-    \item \fF{} to $\top \U \phi$
-    \item \fG{} to $\lnot (\F \lnot \phi)$
-\end{itemize}
-
-A specialized formula walker, \texttt{LtlEncodingWalker}, is then employed to compute all of the elementary subformulae and the associated sat values:
-\begin{itemize}
-    \item For \fX{} a fresh symbol $\mathrm{EL}_{\fX}$ is created, with $\mathrm{sat}(\fX) = EL_{\fX}$
-    \item For \fU{} a fresh symbol $\mathrm{EL}_{X (\fU)}$ is created, with $\mathrm{sat}(\fU) = sat(\psi) \lor (\mathrm{sat}(\phi) \land \mathrm{EL}_{X (\fU)})$
-\end{itemize}
-
-To constrain the evolution of the new variables, a transition constraint is added for each of them:
-
-\[ \mathrm{EL}_{\fX} \leftrightarrow (\mathrm{sat}(\phi))' \]
-
-To ensure that the properties are eventually fulfilled, liveness properties are added to the model.
-For every elementary subformula in the shape \begin{math}X (\fU)\end{math}, a property \begin{math}\lnot \mathrm{sat}(\fU) \lor \mathrm{sat}(\psi) \end{math} is added.
-The properties are then combined into a single liveness property to ensure compatibility with the model checkers, which is negated to return to our original \ltl{} specification.
-
-% Include sample implementation?
-
-\paragraph*{\ltl{} circuit encoding}
-
-A different approach for the encoding was presented in "A circuit Approach to \ltl{} Model Checking" \cite{LTLCircuits}.
+This chapter will discuss in detail some of the other features that are available within \pyvmt{}, particularly focussing on tools which may be useful or even necessary for the end user to perform certain computations while using a model.
 
 \section{Merging Transition Systems}
 \paragraph*{Synchronous compositions.}
