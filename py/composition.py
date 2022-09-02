@@ -22,10 +22,8 @@ model_b.add_trans(Ite(a,
     Equals(Next(counter), counter)
 ))
 
-c = model_b.create_frozen_var('c', typing.INT)
-model_b.add_init(GT(c, Int(0)))
 # eventually the counter becomes greater than 10 forever
-model_b.add_live_property(GT(counter, c))
+model_b.add_live_property(GT(counter, Int(10)))
 res = Ic3iaSolver(model_b).check_property_idx(0)
 assert res.is_unsafe() # the counter may never increase if `a` is always False
 

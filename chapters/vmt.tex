@@ -1,30 +1,17 @@
 \chapter{Background}
+\label{ch:background}
+% separate implementation and scientific basis
 % TODO may change this sentence
 This chapter will outline the most important notions of scientific and technical background that define the groundwork for this thesis.
 
-\section{Software verification}
-The classical approach for finding and resolving bugs in software usually involves writing tests and code reviews done by other developers.
-The safety of a system tested in this manner is not guaranteed since only a limited amount of scenarios can be explored, and subtle bugs may go unnoticed even after peer-review.
-A mathematical approach is therefore necessary whenever such guarantees are required, for example when dealing with complex, safety-critical systems where bugs may have severe repercussions and are therefore not acceptable.
-
-There are multiple approaches to mathematically formalizing a program, one of them is representing it as a transition system, that is, a model utilizing states and transitions between the states.
-Transition systems can also be thought of as directed graphs, where each node is a state and the branches connecting the states are the possible transitions.
-After representing a program in a formal manner, it is possible to specify some property which we want the system to respect and, because of the mathematical formalization, proving such specifications becomes possible using some specialized program called model checker.
-% For these applications, software may be written utilizing a formal language, allowing for model checking to be applied in order to formally verify some properties corresponding to the specifications.
-
-\paragraph*{Futurebus+}
-The verification of the \ieee{} Futurebus+ cache coherence protocol \cite{futurebus-plus} is regarded as the first time formal methods were applied to verify the correctness of an \ieee{} protocol.
-The approach to verification required constructing a model using a formal language (in this case \smv{} was chosen) and using it to show that the system satisfied the specifications.
-This research was also able to find errors within the original formulation that were previously unnoticed, thus demonstrating a practical industrial usage of formal methods in the definition of standards.
-
-\section{From \smt{} to \vmt{}.}
+\section{From \smt{} to \vmt{}}
 
 \SMT{} is a generalization of the \sat{} (boolean satisfiability) problem.
 It involves proving whether a formula can be satisfied by some assignment of the variables.
 The expressions, which can include lists, arrays, bit vectors, and strings are interpreted within a formal theory, which is used to define the rules and assumptions under which these operators behave.
 
 In recent years, research has intensified into developing programs that can solve the \smt{} problem, such as \zthree{} \cite{DBLP:conf/tacas/MouraB08}, \yices{} \cite{DBLP:conf/cav/Dutertre14}, or \mathsat{} \cite{DBLP:conf/tacas/CimattiGSS13}, which are capable of proving whether such an assignment exists.
-A standard language for defining \smt{} problems is called \smtlib{} \cite{SMT-LIB} and is supported by many of the existing solvers.
+A standard language for defining \smt{} problems is called \smtlib{} \cite{BarFT-SMTLIB} and is supported by many of the existing solvers.
 It simplifies interfacing to such programs by providing a uniform language to define the problems.
 
 \paragraph*{\pysmt{}.}
@@ -55,7 +42,7 @@ Using \pysmt{} it's possible to represent all of these elements thanks to the \t
 This is the main motivation behind \pyvmt{}, to work as an extension of \pysmt{} making use of its powerful formula manipulation capabilities, and offering some extra features that simplify prototyping and verifying models. These will be discussed in detail within the next chapters.
 
 
-\section{Some types of verification problems}
+\section{Some Types of Verification Problems}
 Many different problems can be solved by using a verification tool, the following paragraphs include a few relevant ones.
 
 \paragraph*{\ltl{}.} \ltl{} or \LTL{} is used to define complex properties over execution sequences of the system.
@@ -71,7 +58,7 @@ The semantics of the operators is as follows:
 Combinations of these operators may be used to create classic property types or more complex properties.
 
 \paragraph*{Safety.} Safety properties are used to define that the system never reaches states in which a condition we want to avoid is verified, in \ltl{} this can be written as \fsafe{}.
-This verifies that the states which the system can reach is limited to safe ones and that the \texttt{bad} behavior cannot be reached during the execution.
+This verifies that the states which the system can reach are limited to safe ones and that the \texttt{bad} behavior cannot be reached during the execution.
 
 An example of a safety problem is ensuring that it's impossible for the door of a microwave to be open when the device is running:
 \[

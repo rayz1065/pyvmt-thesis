@@ -1,4 +1,6 @@
 \chapter{Other Features}
+\label{ch:other-features}
+
 This chapter will discuss in detail some of the other features that are available within \pyvmt{}, particularly focussing on tools which may be useful or even necessary for the end user to perform certain computations while using a model.
 
 \section{Merging Transition Systems}
@@ -15,7 +17,7 @@ This can be useful to make the two models communicate by replacing a nondetermin
 
 \begin{listing}
     \label{alg:composition}
-    \inputmintedpy{py/composition.py}{9}{35}
+    \inputmintedpy{py/composition.py}{9}{33}
     \caption{\texttt{model\_b} is a counter which increments based on a non-deterministic variable \texttt{a}. Since \texttt{a} may always be 0, the property $\F (\G (\mathrm{counter} > 10))$ is unsafe.
     Composing the model with \texttt{model\_a} replaces the input \texttt{a} with the state variable from \texttt{model\_a}, making the previous property safe.}
 \end{listing}

@@ -1,12 +1,14 @@
 \chapter{Modelling using \pyvmt{}}
+\label{ch:modelling}
+
 \pyvmt{} exports a \texttt{Model} class which allows the user to define a model from scratch, manually adding variables and formulae or using helper functions to do so.
 
 
-\section{State variables}
-State variables in \pyvmt{} are \pysmt{} Symbols and can be added to a model using the \texttt{add\_state\_variable} method passing the curr state variable, or the \texttt{create\_state\_variable} helper method.
+\section{State Variables}
+State variables in \pyvmt{} are \pysmt{} \texttt{Symbol}s and can be added to a model using the \texttt{add\_state\_variable} method passing the curr state variable, or the \texttt{create\_state\_variable} helper method.
 \pyvmt{} doesn't keep track of next state variables explicitly, instead it uses a custom operator called \texttt{Next} to wrap formulae referring to the next state and generates a next state variable for substitution when needed (e.g. when passing the model to a model checker).
 
-\paragraph*{Next operator.} The \texttt{Next} function is an addition to the \pysmt{} \texttt{FormulaManager}, it generates a new node containing the custom \texttt{NEXT} operator. It can be used on both symbols and more complex formulae of any type, with the only constraint that it cannot be used on formulae which already contain the \texttt{Next} symbol. This operators has several advantages:
+\paragraph*{Next operator.} The \texttt{Next} function is an addition to the \pysmt{} \texttt{FormulaManager}, it generates a new node containing the custom \texttt{NEXT} operator. It can be used on both \texttt{Symbol}s and more complex formulae of any type, with the only constraint that it cannot be used on formulae which already contain the \texttt{Next} operator. This operators has several advantages:
 \begin{enumerate}
     \item The user doesn't need to keep track of both curr and next state variables, since the latter can be generated from the former using the \texttt{FormulaManager}.
     \item Explicit replacements with next state variables are not performed while generating a next state formula, making debugging easier.
@@ -50,7 +52,7 @@ The \texttt{create\_frozen\_var} helper method can be used to create such a vari
 \section{Properties}
 Properties do not determine the states of the model or how it evolves, they instead correspond to some condition which we want to verify.
 There are 3 kinds of properties in \pyvmt{}: invar, live, and \ltl{}.
-Adding a property directly to the model can be useful for serialization \ref{sec:vmtlib-serialization} and model checking \ref{ch:model-checking} which will be explained in detail in the next chapters.
+Adding a property directly to the model can be useful for serialization which will be discussed in the section \ref{sec:vmtlib-serialization} as well as model checking which will be discussed in chapter \ref{ch:model-checking}.
 
 \paragraph*{Invariant properties.}
 Invariant properties are the simplest, they specify that a formula has to be verified in the initial state and all subsequent states.
@@ -58,13 +60,13 @@ They correspond in \ltl{} to the formula \fsafe{}.
 A counterexample to such a property is just an execution path that starts at the initial state and after a certain amount of steps (possibly 0) reaches a state where the formula no longer holds.
 The method for adding an invariant property is \texttt{add\_invar\_property}, it optionally accepts an index for the property.
 
-\paragraph*{Live properties}
+\paragraph*{Live properties.}
 Live properties specify that eventually, a formula will always hold.
 They correspond in \ltl{} to the formula \flive{}.
 A counterexample to such a property is an execution path where the negated formula is verified, namely $\G \F \lnot \phi$ which means that the negated version of $\phi$ has to happen infinitely often.
 To add a live property the method \texttt{add\_live\_property} may be used, it optionally accepts an index for the property.
 
-\paragraph*{\ltl{} properties}
+\paragraph*{\ltl{} properties.}
 
 \ltl{} properties can represent more complex properties using \LTL{} operators.
 The following \ltl{} operators are supported in \pyvmt{}, and can be used through the \pyvmt{} custom \texttt{FormulaManager}:

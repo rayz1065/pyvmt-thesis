@@ -1,7 +1,22 @@
-\chapter*{Introduction}
+\chapter{Introduction}
 \label{introduction}
 
-\paragraph*{Context and motivation}
+The classical approach for finding and resolving bugs in software usually involves writing tests and code reviews done by other developers.
+The safety of a system tested in this manner is not guaranteed since only a limited amount of scenarios can be explored, and subtle bugs may go unnoticed even after peer-review.
+A mathematical approach is therefore necessary whenever such guarantees are required, for example when dealing with complex, safety-critical systems where bugs may have severe repercussions and are therefore not acceptable.
+
+There are multiple approaches to mathematically formalizing a program, one of them is representing it as a transition system, that is, a model utilizing states and transitions between the states.
+Transition systems can also be thought of as directed graphs, where each node is a state and the branches connecting the states are the possible transitions.
+After representing a program in a formal manner, it is possible to specify some property which we want the system to respect and, because of the mathematical formalization, proving such specifications becomes possible using some specialized program called model checker.
+% For these applications, software may be written utilizing a formal language, allowing for model checking to be applied in order to formally verify some properties corresponding to the specifications.
+
+\paragraph*{Futurebus+}
+The verification of the \ieee{} Futurebus+ cache coherence protocol \cite{DBLP:journals/fmsd/ClarkeGHJLMN95} is regarded as the first time formal methods were applied to verify the correctness of an \ieee{} protocol.
+The approach to verification required constructing a model using a formal language (in this case \smv{} was chosen) and using it to show that the system satisfied the specifications.
+This research was also able to find errors within the original formulation that were previously unnoticed, thus demonstrating a practical industrial usage of formal methods in the definition of standards.
+
+\section{Contribution}
+
 \pyvmt{} was created by me as part of a formative internship at \FBK{}. It's an extension of an existing project which was also created in the foundation, \pysmt{}, which offers a solver-agnostic formula manipulation interface.
 Several factors motivate the creation for an extension:
 \begin{itemize}
@@ -10,15 +25,23 @@ Several factors motivate the creation for an extension:
   \item the addition of support for model checkers to offer an experience similar to \pysmt{} while dealing with verification problems
 \end{itemize}
 
-\paragraph*{What can \pyvmt{} do?}
-\pyvmt{} is a \python{} library that enables the user to manage VMT models by reading and writing code in the \vmtlib{} format, modifying models by adding variables, constraints, properties, or with some higher level function such as renaming and synchronous composition. It offers several model checkers as backend for verification, making it simpler for the user to choose several of them and compare their performance.
+The objective that \pyvmt{} poses for itself is creating a library to deal with verification problems that does not rely on any specific model checker, not just being the wrapper for one specific standard but adding tools and abstractions which further simplify interoperability between systems and sharing of benchmarks.
 
-\paragraph*{Techniques used}
+\paragraph*{What can \pyvmt{} do?}
+\pyvmt{} is a \python{} library that enables the user to manage \vmt{} models by reading and writing code in the \vmtlib{} format, modifying models by adding variables, constraints, properties, or with some higher level function such as renaming and synchronous composition. It offers several model checkers as backend for verification, making it simpler for the user to choose several of them and compare their performance.
+
+The features of the library will be presented in an order which aids comprehension of the architecture of the library, but first in Chapter \ref{ch:background} I will go over the scientific and technical background, explaining in detail what \pysmt{} is and the importance it has in its field.
+In Chapter \ref{ch:modelling} the modelling system of \pyvmt{} will be explained in detail with examples showcasing the API for model manipulation.
+Chapters \ref{ch:vmtlib} and \ref{ch:model-checking} will explain how this library can interface with external systems thanks to model parsing, serialization, and built-in functions which allow the user to run model checkers and get their results.
+In Chapter \ref{ch:ltl-support} I will demonstrate some of the possibilities which are enabled by \pyvmt{} through an experimental evaluation which serves as a proof of concept for the capabilities of this library to implement complex algorithms.
+Finally, in Chapter \ref{ch:other-features} other utility features will be presented and in Chapter \ref{ch:conclusions} I will conclude with some final remarks and lay the base for future works.
+
+\paragraph*{Used techniques.}
 \pyvmt{} is written in \python{}, it was developed using a continuous integration approach, utilizing \github{} actions as a tool to verify non-regression after each update.
 Tests are run using the \pytest{} test suite and are mostly composed of unit tests which aim to cover most of the library's source code.
 Most of the documentation is present in the source code as doc-strings so that they can easily be looked up while using an IDE. An external reference is also available and can be generated using sphinx.
 After all the tests pass, the new version of the library is automatically uploaded as a package to \pypi{} so that any user can use it in their own project.
 
-\paragraph*{Results reached}
-To verify the functionality of \pyvmt{}, I collected several benchmarks and ran them against the available solvers. The results from these experiments show a promising support from the backends to deal with most of the problems within their supported theories.
+% \paragraph*{Achieved results.}
+% To verify the functionality of \pyvmt{}, I collected several benchmarks and ran them against the available solvers. The results from these experiments show a promising support from the backends to deal with most of the problems within their supported theories.
 

@@ -18,7 +18,6 @@ def generate_ltlenc_charts ():
     ltl2smv_stvars = [int(x['LTL2SMV_STVARS']) - int(x['START_STVARS']) for x in lines]
     circuit_stvars = [int(x['CIRCUIT_STVARS']) - int(x['START_STVARS']) for x in lines]
 
-    plt.clf()
     plt.scatter(ltl2smv_time, circuit_time)
     plt.ylabel('Circuit solve time')
     plt.xlabel('LTL2SMV solve time')
@@ -26,9 +25,10 @@ def generate_ltlenc_charts ():
     plt.xscale('log')
     plt.axis('square')
     plt.axis([0.1, 1000, 0.1, 1000])
+    plt.subplot().axline((0, 0), (1, 1), linestyle='--', color='r')
     plt.savefig(os.path.join(dirname, 'ltlenc_time_comparison.png'))
-
     plt.clf()
+
     plt.scatter(ltl2smv_stvars, circuit_stvars)
     plt.ylabel('Circuit extra stvars')
     plt.xlabel('LTL2SMV extra stvars')
@@ -36,7 +36,9 @@ def generate_ltlenc_charts ():
     plt.xscale('log')
     plt.axis('square')
     plt.axis([1, 10000, 1, 10000])
+    plt.subplot().axline((0, 0), (1, 1), linestyle='--', color='r')
     plt.savefig(os.path.join(dirname, 'ltlenc_stvar_comparison.png'))
+    plt.clf()
 
 def main():
     generate_ltlenc_charts()

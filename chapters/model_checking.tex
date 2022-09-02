@@ -1,11 +1,13 @@
-\chapter{Model checking in \pyvmt{}}
+\chapter{Model Checking in \pyvmt{}}
 \label{ch:model-checking}
 \pyvmt{} supports several model checkers and provides a layer of abstraction to interface with them. Through a model checker it is possible to know whether the properties specified over a model are verified.
+The choice of solver to use has to be motivated by the type of model and property that is being checked, since not all of them support every kind of theory.
+Futhermore, some of them specialize in checking invariant properties and cannot handle liveness properties.
 
 Running a model checker over a model in \pyvmt{} can be done entirely within \python{} code through the following steps:
 \begin{enumerate}
     \item Read or create a new model
-    \item Create a new instance of the preferred solver
+    \item Create a new instance of the chosen solver
     \item Optionally modify the options for the solver
     \item Formulate a property and either add it to the model or pass it directly to one of the helper methods available for the model checker
     \item Analyze the result
@@ -21,10 +23,10 @@ Typically to run a solver, \pyvmt{} creates a temporary file and stores in it th
 After that, it creates a subprocess using \texttt{subprocess.run}, and passing the options either through command line arguments or through the standard input.
 Finally, the output from the model checker is parsed and returned to the user.
 
-\section{Available solvers}
+\section{Available Solvers}
 
 \paragraph*{\nuxmv{}.}
-\nuxmv{} is an extension of \nusmv{} and is capable of checking synchronous finite and infinite state systems \cite{DBLP:conf/cav/CavadaCDGMMMRT14}.
+\nuxmv{} is an extension of \nusmv{} \cite{DBLP:journals/sttt/CimattiCGR00} and is capable of checking synchronous finite and infinite state systems \cite{DBLP:conf/cav/CavadaCDGMMMRT14}.
 \nuxmv{} has its own input format based on the language for \nusmv{}, but it is also possible to pass directly \vmtlib{} thanks to its \texttt{read\_vmt\_model} command.
 Several algorithms are available for model checking and both invariants and live properties are supported.
 The logic supported by \nuxmv{} depends on the chosen algorithm since algorithms working with interpolants do not support having both integer and real arithmetic at the same time.
@@ -33,14 +35,14 @@ Complex logics containing arrays, BitVectors, integer and real arithmetic are ot
 Options are passed to the solver through the standard input as commands, the output is parsed through the use of regular expressions.
 
 \paragraph*{\iceia{}.}
-\iceia{} utilizes implicit abstraction to verify the safety of properties over infinite state systems \cite{10.1007/978-3-319-41528-4_15}.
+\iceia{} utilizes implicit abstraction to verify the safety of properties over infinite state systems \cite{DBLP:conf/cav/DanielCGTM16}.
 It supports \vmtlib{} directly since it's the only format which it reads, and allows for both invariant and live properties.
 \iceia{} supports linear arithmetic formulae which can contain integer and real arithmetic combined through boolean conditions.
 
 The output from the solver may contain a counterexample encoded as a series of steps, each of which is a conjunction of assignments in \smtlib{} format. To parse the counterexample, the \texttt{SmtLibParser} class is employed.
 
 \paragraph*{\euforia{}.}
-\euforia{} is a model checker which works through abstraction-refinement to prove a property or find a feasible abstract counterexample that disproves it \cite{10.1007/978-3-030-11245-5_17}.
+\euforia{} is a model checker which works through abstraction-refinement to prove a property or find a feasible abstract counterexample that disproves it \cite{DBLP:conf/vmcai/BuenoS19}.
 The \vmtlib{} format is supported directly by \euforia{} as its input format and it allows for invariant properties.
 \euforia{} supports formulae containing BitVectors and arrays, it does not on the other hand support linear or real arithmetic.
 
