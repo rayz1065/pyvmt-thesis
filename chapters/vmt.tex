@@ -1,8 +1,7 @@
 \chapter{Background}
 \label{ch:background}
-% separate implementation and scientific basis
-% TODO may change this sentence
-This chapter will outline the most important notions of scientific and technical background that define the groundwork for this thesis.
+This chapter will outline the most important notions of scientific background that define the groundwork for this thesis.
+It will then move on to more technical background information, detailing the main information regarding \pysmt{} upon which \pyvmt{} is built.
 
 \section{From \smt{} to \vmt{}}
 
@@ -13,19 +12,7 @@ The expressions, which can include lists, arrays, bit vectors, and strings are i
 In recent years, research has intensified into developing programs that can solve the \smt{} problem, such as \zthree{} \cite{DBLP:conf/tacas/MouraB08}, \yices{} \cite{DBLP:conf/cav/Dutertre14}, or \mathsat{} \cite{DBLP:conf/tacas/CimattiGSS13}, which are capable of proving whether such an assignment exists.
 A standard language for defining \smt{} problems is called \smtlib{} \cite{BarFT-SMTLIB} and is supported by many of the existing solvers.
 It simplifies interfacing to such programs by providing a uniform language to define the problems.
-
-\paragraph*{\pysmt{}.}
-A \python{} library called \pysmt{} \cite{pysmt2015} was created to provide a uniform interface for defining \smt{} formulae which does not rely on any specific solver.
-It also offers tools to interface with multiple built-in solvers, as well as any \smtlib{} compliant solver, which makes it a very efficient instrument to run multiple solvers on the same formulae and prototyping algorithms.
-One of the many strengths of \pysmt{} is its extensibility, every feature is built in a manner which simplifies building new behaviors and changing existing ones.
-Helpful guides and examples are present within the documentation that show how this may be done.
-
-Let's take for example the definition of formulae using \pysmt{}. Every operation in \pysmt{} is represented by an \texttt{FNode}, and each of these nodes can have many children which are its operands.
-Formulae can be created through the \texttt{FormulaManager}, a class which verifies offers an interface to create new \texttt{FNode}s and ensures that if two formulae are the same, they will also be represented by the same \python{} object making them indistinguishable.
-Using the \texttt{new\_node\_type} function it's possible to create a new custom operator, and adding it to the \texttt{FormulaManager} is as simple as extending its class and creating a subclass with a method to generate the new node.
-Another key concept within \pysmt{} are formula walkers, which are tools to visit every node within a formulae and may be used, for example, to infer the type of a node, or to apply some transformation to the formula.
-The most basic walkers are the \texttt{TreeWalker} which explores the tree formed by the formula, and the \texttt{DagWalker} which works in a similar manner but also performs memoization which dramatically speeds up the process when working with formulae containing repeated subformulae, exploring each unique node only once.
-All formula walkers within \pysmt{} are extensible through the same process of class extension, therefore the behavior of the new operators can be specified for every walker simplifying the process of formula manipulation.
+This is a crucial aspect about the standard since the possibility to share benchmarks between many different solvers has been an essential instrument for comparing different \smt{} systems and improving the underlying technology.
 
 \paragraph*{\vmt{}.}
 \VMT{} adds a dynamic aspect to \smt{}, allowing the specification of transition systems. In \vmt{}, transition systems are defined in a symbolic manner, they're composed of several elements:
@@ -37,9 +24,6 @@ All formula walkers within \pysmt{} are extensible through the same process of c
 States are therefore not explicitly expressed, rather are symbolically defined with formulae on the state variables.
 This has the advantage of allowing for transition systems with an extremely large number of states, and is frequently a more natural way to define their behavior.
 The transition between states is regulated by a transition constraint, which is a relation between current and next state variables and must be verified during a transition. The set of initial states is also not explicit, initial states must verify the init constraint.
-
-Using \pysmt{} it's possible to represent all of these elements thanks to the \texttt{FormulaManager} and the library's extensibility, but it would be useful to have a layer of abstraction that stores the data and deals with common operations that may be performed.
-This is the main motivation behind \pyvmt{}, to work as an extension of \pysmt{} making use of its powerful formula manipulation capabilities, and offering some extra features that simplify prototyping and verifying models. These will be discussed in detail within the next chapters.
 
 
 \section{Some Types of Verification Problems}
@@ -86,4 +70,20 @@ Once modelled, the solution can be found as a counterexample to the property:
 
 The resulting counterexample displays which entities have to be carried across the river and back in each step.
 
+\section{\pysmt{}}
+A \python{} library called \pysmt{} \cite{pysmt2015} was created to provide a uniform interface for defining \smt{} formulae which does not rely on any specific solver.
+It also offers tools to interface with multiple built-in solvers, as well as any \smtlib{} compliant solver, which makes it a very efficient instrument to run multiple solvers on the same formulae and prototyping algorithms.
+Just like \smtlib{}, this library has also been important in the development of the field since it offered a programming interface to make working with \smt{} problems simple, abstracting the complexity and specificity of the underlying solvers.
+One of the many strengths of \pysmt{} is its extensibility, every feature is built in a manner which simplifies building new behaviors and changing existing ones.
+Helpful guides and examples are present within the documentation that show how this may be done.
+
+Let's take for example the definition of formulae using \pysmt{}. Every operation in \pysmt{} is represented by an \texttt{FNode}, and each of these nodes can have many children which are its operands.
+Formulae can be created through the \texttt{FormulaManager}, a class which verifies offers an interface to create new \texttt{FNode}s and ensures that if two formulae are the same, they will also be represented by the same \python{} object making them indistinguishable.
+Using the \texttt{new\_node\_type} function it's possible to create a new custom operator, and adding it to the \texttt{FormulaManager} is as simple as extending its class and creating a subclass with a method to generate the new node.
+Another key concept within \pysmt{} are formula walkers, which are tools to visit every node within a formulae and may be used, for example, to infer the type of a node, or to apply some transformation to the formula.
+The most basic walkers are the \texttt{TreeWalker} which explores the tree formed by the formula, and the \texttt{DagWalker} which works in a similar manner but also performs memoization which dramatically speeds up the process when working with formulae containing repeated subformulae, exploring each unique node only once.
+All formula walkers within \pysmt{} are extensible through the same process of class extension, therefore the behavior of the new operators can be specified for every walker simplifying the process of formula manipulation.
+
+Using \pysmt{} it's possible to represent all of the elements which compose a \vmt{} problem, thanks to the \texttt{FormulaManager} and the library's extensibility, but it would be useful to have a layer of abstraction that stores the data and deals with common operations that may be performed.
+This is the main motivation behind \pyvmt{}, to work as an extension of \pysmt{} making use of its powerful formula manipulation capabilities, and offering some extra features that simplify prototyping and verifying models. These will be discussed in detail within the next chapters.
 
