@@ -1,10 +1,10 @@
-\chapter{\vmtlib{} support}
+\chapter{\vmtlib{} Support}
 \label{ch:vmtlib}
 \pyvmt{} allows for conversion to and from a standard specification format called \vmtlib{}, allowing for higher interoperability of the library with external systems.
 This chapter will focus on the definition of the format and the possibilities unlocked by such a conversion.
 
-\section{The \vmtlib{} format}
-\vmtlib{} is an extension of the \smtlib{} format and provides a standard interface for defining transition systems by exploiting the possibility to attach annotations to terms and formulas, which can be used to specify the model behaviors \cite{vmt-lib-paper}.
+\section{The \vmtlib{} Format}
+\vmtlib{} is an extension of the \smtlib{} format and provides a standard interface for defining transition systems by exploiting the possibility to attach annotations to terms and formulas, which can be used to specify the model behaviors \cite{DBLP:journals/corr/abs-2109-12821}.
 
 It is designed with a limited amount of language constructs, aiming for simplicity for anyone interested in implementing the language within their \vmt{} solver:
 \begin{itemize}
@@ -12,18 +12,20 @@ It is designed with a limited amount of language constructs, aiming for simplici
     \item \textbf{:init} is used to specify the formula used to constrain the initial states for the system.
     \item \textbf{:trans} is used to specify the formula used to constrain the transitions from each state to the next for the system.
     \item \textbf{:invar-property idx} is used to specify an invariant property to be verified, in \ltl{} it's in the form \fsafe{} and requires a formula to always hold. A non-negative integer specifies the index of the property.
-    \item \textbf{:live-property idx} is used to specify a live property to be verified, in \ltl{} it's in the form \flive{} and requires a formula to hold infinitely often. A non-negative integer specifies the index of the property.
+    \item \textbf{:live-property idx} is used to specify a live property to be verified, in \ltl{} it's in the form \flive{} and requires a formula to hold eventually hold forever. A non-negative integer specifies the index of the property.
 \end{itemize}
 
-An in-depth explanation of the format, including a list of available tools may be found on the \vmtlib{}'s website \cite{VMT-LIB}.
+% TODO show an example
+An in-depth explanation of the format, including a list of available tools may be found on \vmtlib{}'s website \cite{VMT-LIB}.
 
 \pyvmt{} modelling system is similar to that of \vmtlib{} making converting to and from the format simpler.
-This allows for higher interoperability since a model created in \pyvmt{} may be serialized to \vmtlib{} and be used in a model checker which isn't supported by the library.
+Despite that, it's important to note that this library doesn't just work as a wrapper for the format, since it also offers abstractions like the \texttt{Next} operator which are not supported by \vmtlib{} but they make working with \vmt{} problems simpler.
+The conversion allows for higher interoperability since a model created in \pyvmt{} may be serialized to \vmtlib{} and used in a model checker which isn't supported directly by the library.
 
 \section{Reading}
 \pysmt{} already supports parsing \smtlib{} through the \texttt{SmtLibParser} class.
-\pyvmt{} defines a function for reading a script from an input stream called \texttt{read}, which parses the script and runs through the annotations.
-For every \texttt{:next} annotation a new state variable is added. Since \pyvmt{} only keeps track of curr state variables, the next state variable is ignored.
+\pyvmt{} defines the \texttt{read} function which reads a script from an input stream, parses it, and runs through the all the annotated formulae to extract the model.
+For every \texttt{:next} annotation a new state variable is added. Since \pyvmt{} only keeps track of curr state variables, the next state variables are ignored.
 After that, any declaration which was not a curr or next state variable is considered as an input.
 
 To make next state variables work properly in trans constraints and properties, a substituter is employed to replace every instance of a next state variable with the corresponding representation using the \texttt{Next} operator.
@@ -38,8 +40,8 @@ Reading an existing \vmtlib{} model can have several use-cases:
 
 \begin{listing}
     \label{alg:reading-vmtlib}
-    \inputmintedpy{py/vmtlib_support.py}{11}{34}
-    \caption{A simple script which reads a \vmtlib{} model from the standard input, prints some statistics, modifies the model by adding a counter, and runs multiple model checkers over the modified model.}
+    \inputmintedpy{py/vmtlib_support.py}{11}{38}
+    \caption{A simple script which reads a \vmtlib{} model from the standard input, prints some statistics, modifies the model by adding a counter, and runs multiple model checkers over the modified model. The new model is then serialized to the standard output.}
 \end{listing}
 
 \section{Writing}
@@ -47,11 +49,11 @@ Reading an existing \vmtlib{} model can have several use-cases:
 \pysmt{} already provides printers for \smtlib{} supporting two formats: normal and daggified, the latter providing a version that avoids repeating common formulae.
 
 The \texttt{serialize} method of the \texttt{Model} produces a \texttt{FreshSymbol} for each of the next state variables and uses them to replace all of the \texttt{Next} operators which are not supported in \vmtlib{}.
-To make sure that the replacements work properly, a custom walker named \texttt{NextPusher} is used to push all of the \texttt{Next} operators down to the leaves, leaving \texttt{Next} operators only on \texttt{Symbol}s.
+To make sure that the replacements work properly, a custom walker named \texttt{NextPusher} is used to push all of the \texttt{Next} operators down to the leaves, leaving them only on \texttt{Symbol}s.
 Additionally, to replace the unsupported operators the \texttt{VmtLibSubstituter} is used. To be specific it performs a replacement of any next state variable with the corresponding \texttt{FreshSymbol}, leaving only supported operators in the final formula.
 
 As previously mentioned, serializing a model to \vmtlib{} is useful whenever trying to use a model checker which is not directly supported by \pyvmt{}, but it can also be a step to use a model checker that doesn't support \vmtlib{} in the first place.
-Once the model has been serialized to \vmtlib{}, several tools are available to further convert the model to a different format, they may be found on the \vmtlib{} website under the section `Tool Support' \cite{VMT-LIB}, the currently supported formats for conversion are:
+Once the model has been serialized, several tools are available to further convert the model to a different format, they may be found on the \vmtlib{} website under the section `Tool Support' \cite{VMT-LIB}, the currently supported formats for conversion are:
 \begin{itemize}
     \item \btor{} \cite{DBLP:conf/cav/NiemetzPWB18} the format used by \boolector{}
     \item Constrained Horn Clauses
@@ -59,10 +61,13 @@ Once the model has been serialized to \vmtlib{}, several tools are available to 
     \item core \vmtlib{}, excluding language extensions
 \end{itemize}
 
-\inputminted[firstline=37, lastline=38]{python3}{py/vmtlib_support.py}
+% \inputminted[firstline=37, lastline=38]{python3}{py/vmtlib_support.py}
 
 \section{\ltl{}}
-\pyvmt{} supports reading \ltl{}-properties thanks to an extension of the \texttt{SmtLibParser} that adds the various operators as interpreted functions. Additionally, \ltl{} operators may be printed using the \texttt{VmtPrinter} and \texttt{VmtDagPrinter}, which respectively extend the \texttt{SmtPrinter} and \texttt{SmtDagPrinter} provided by \pysmt{}. The \fR{} operator is not natively supported by \vmtlib{}, properties that contain it must first be passed through the \texttt{VmtLibSubstituter} which replaces it with the equivalent $\lnot (\lnot \phi\ U \lnot \psi)$. As mentioned in the previous section this is done automatically while serializing a model.
+An extension of the \vmtlib{} format includes the possibility to specify \ltl{} properties through the \texttt{:ltl-property} annotation.
 
-% LTL removal
+\pyvmt{} supports reading \ltl{} properties thanks to an extension of the \texttt{SmtLibParser} that adds the various operators as interpreted functions. Additionally, \ltl{} operators may be printed using the \texttt{VmtPrinter} and \texttt{VmtDagPrinter}, which respectively extend the \texttt{SmtPrinter} and \texttt{SmtDagPrinter} provided by \pysmt{}. The \fR{} operator is not natively supported by \vmtlib{}, properties that contain it must first be passed through the \texttt{VmtLibSubstituter} which replaces it with the equivalent $\lnot (\lnot \phi\ U \lnot \psi)$. As mentioned in the previous section this is done automatically while serializing a model.
+
+Since \ltl{} properties are not part of the core language of \vmtlib{}, it's not expected that every model checker supports it natively.
+To tackle this issue the property may be encoded into the model and replaced with a different kind of property, this will be the subject of Chapter \ref{ch:ltl-support}.
 
