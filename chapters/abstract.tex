@@ -3,4 +3,11 @@
 
 \addcontentsline{toc}{chapter}{Abstract}
 
-% TODO
+Formal verification has become an essential tool in ensuring safety and liveness of complex software and hardware systems which are used in safety critical situations.
+Over the last few years symbolic methods for formal verification have become quite popular, and the definition of the standard language \smtlib{} has lead to the creation of a large collection of benchmarks.
+This allowed for comparisons between \smt{}-solvers which further sparked innovation.
+Another contributor is \pysmt{}, a \python{} library that makes working with \smt{} problems simple, and offers tools for formula manipulation which don't rely on any specific solver.
+This thesis goal is to contribute to the field of \VMT{} by extending \pysmt{} with the creation of \pyvmt{}, a library which includes specific tools used in verification, allowing for faster prototyping of models and algorithms, and increasing the interoperability of model checkers.
+I will be going over the architecture of the library, the ways it allows to run model checkers within the library and how it interfaces with external tools.
+I will also be presenting the results from an experimental evaluation, showing how the implementations of two \ltl{} encoding procedures compare to each other as a proof of concept for the capabilities of the library.
+
