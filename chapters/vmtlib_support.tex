@@ -16,15 +16,15 @@ It is designed with a limited amount of language constructs, aiming for simplici
 \end{itemize}
 
 % TODO show an example
-An in-depth explanation of the format, including a list of available tools may be found on \vmtlib{}'s website \cite{VMT-LIB}.
+An in-depth explanation of the format, including a list of available tools, may be found on \vmtlib{}'s website \cite{VMT-LIB}.
 
-\pyvmt{} modelling system is similar to that of \vmtlib{} making converting to and from the format simpler.
+\pyvmt{} modeling system is similar to that of \vmtlib{} making converting to and from the format simpler.
 Despite that, it's important to note that this library doesn't just work as a wrapper for the format, since it also offers abstractions like the \texttt{Next} operator which are not supported by \vmtlib{} but they make working with \vmt{} problems simpler.
 The conversion allows for higher interoperability since a model created in \pyvmt{} may be serialized to \vmtlib{} and used in a model checker which isn't supported directly by the library.
 
 \section{Reading}
 \pysmt{} already supports parsing \smtlib{} through the \texttt{SmtLibParser} class.
-\pyvmt{} defines the \texttt{read} function which reads a script from an input stream, parses it, and runs through the all the annotated formulae to extract the model.
+\pyvmt{} defines the \texttt{read} function which reads a script from an input stream, parses it, and runs through all the annotated formulae to extract the model.
 For every \texttt{:next} annotation a new state variable is added. Since \pyvmt{} only keeps track of curr state variables, the next state variables are ignored.
 After that, any declaration which was not a curr or next state variable is considered as an input.
 
@@ -34,7 +34,7 @@ Reading an existing \vmtlib{} model can have several use-cases:
 \begin{enumerate}
     \item Modifying a model by adding state variables or constraints in a programmatic way, or combining it with other models
     \item Analyzing an existing model (e.g. by creating a custom formula walker that reads the constraints, by printing some statistics,\dots)
-    \item Running the same \vmtlib{} script against multiple solvers, with different combination of options
+    \item Running the same \vmtlib{} script against multiple solvers, with different combinations of options
     \item \pysmt{}'s \texttt{SmtLibParser} shows exactly where parsing errors occur, helping debug broken \vmtlib{} files. This can be demoed by running \mintinline{bash}{python3 -m pyvmt < some_script.vmt}
 \end{enumerate}
 

@@ -1,20 +1,20 @@
 \chapter{Conclusion}
 \label{ch:conclusions}
 
-In this thesis I presented \pyvmt{} a \python{} library based on \pysmt{} that can manage transition systems in a solver agnostic way.
-I explained and showed through examples the architecture and the API offered by the library for modelling, as well as the ways that it can be interfaced with external tools through serialization into the standard format \vmtlib{}, and by calling model checkers directly.
+In this thesis, I presented \pyvmt{} a \python{} library based on \pysmt{} that can manage transition systems in a solver agnostic way.
+I explained and showed through examples the architecture and the API offered by the library for modeling, as well as the ways that it can be interfaced with external tools through serialization into the standard format \vmtlib{}, and by calling model checkers directly.
 I've conducted an experimental evaluation of which I offered the results and they seem to show a promising capability of the library to implement complex algorithms from the literature that can be used as part of a model checking workflow.
 
 The library is now available on \github{} as an open source project, as well as on \pypi{} so that it may easily be added as a dependency to any project.
 Documentation and examples have also been created for anyone who wants to get started using the library.
 
-In the future there are multiple possible ways in which the library can be expanded with the objective of offering more built-in functionality and speeding up the prototyping process.
+In the future, there are multiple possible ways in which the library can be expanded with the objective of offering more built-in functionality and speeding up the prototyping process.
 To improve the \ltl{} support, it's possible to add the past operators from \pltl{}.
 This would require an expansion to various parts of the library, primarily the encoding procedure that needs to generate the appropriate monitors to evaluate the evolution of the specification.
-Regarding the \ltl{} encoding procedure it would definitely be interesting to implement some of the optimizations suggested in \cite{DBLP:conf/fmcad/ClaessenES13} to the \ltl{} circuit encoding procedure, repeat the experimental evaluation and note what improvements the changes have made on the speed of model checking.
+Regarding the \ltl{} encoding procedure, it would definitely be interesting to implement some of the optimizations suggested in \cite{DBLP:conf/fmcad/ClaessenES13} to the \ltl{} circuit encoding procedure, repeat the experimental evaluation, and note what improvements the changes have made on the speed of model checking.
 
-A feature which would greatly improve the efficiency during the prototyping phase is having a flexible way to compose models, somewhat like \nuxmv{}'s modular approach.
+A feature that would greatly improve the efficiency during the prototyping phase is having a flexible way to compose models, somewhat like \nuxmv{}'s modular approach.
 This would permit the creation of a library of reusable components, but also allow the user to create their own reusable components and include them in multiple of their projects.
 
-Finally, increasing the capabilities offered by the library to interact with the solvers is certainly one of the paths which needs to be explored when moving forward.
-One of the possibilities that needs to be analyzed in more detailed is creating an interface for model simulation directly within the \python{} code, which would greatly simplify the process of debugging models.
+Finally, increasing the capabilities offered by the library to interact with the solvers is certainly one of the paths which need to be explored when moving forward.
+One of the possibilities that need to be analyzed in more detail is creating an interface for model simulation directly within the \python{} code, which would greatly simplify the process of debugging models.

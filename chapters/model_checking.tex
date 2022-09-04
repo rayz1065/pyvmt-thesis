@@ -1,8 +1,8 @@
 \chapter{Model Checking in \pyvmt{}}
 \label{ch:model-checking}
 \pyvmt{} supports several model checkers and provides a layer of abstraction to interface with them. Through a model checker it is possible to know whether the properties specified over a model are verified.
-The choice of solver to use has to be motivated by the type of model and property that is being checked, since not all of them support every kind of theory.
-Futhermore, some of them specialize in checking invariant properties and cannot handle liveness properties.
+The choice of solver to use has to be motivated by the type of model and property that is being checked since not all of them support every kind of theory.
+Furthermore, some of them specialize in checking invariant properties and cannot handle liveness properties.
 
 Running a model checker over a model in \pyvmt{} can be done entirely within \python{} code through the following steps:
 \begin{enumerate}
@@ -59,9 +59,9 @@ Typically results specify whether the checked property is safe or unsafe, in the
 Whenever a property is not verified, a model checker may provide a counterexample corresponding to a series of steps that lead the system to an unsafe state.
 The output from different model checkers is usually not consistent, but \pyvmt{} offers a uniform interface for reading a trace produced by any of the supported model checkers.
 
-In \pyvmt{} traces are modelled as a series of steps, each of which consists of a mapping between the state variables and their values at the step.
+In \pyvmt{} traces are modeled as a series of steps, each of which consists of a mapping between the state variables and their values at the step.
 Traces may also contain an infinite amount of steps (for example when working with live properties).
-One of the possible modelling approaches is used in which exactly one of the steps is a loopback step: after the last step in the series the trace loops back to this step and continues infinitely.
+One of the possible modeling approaches is used in which exactly one of the steps is a loopback step: after the last step in the series the trace loops back to this step and continues infinitely.
 
 \paragraph*{Iterating through a trace.}
 \pyvmt{} offers many methods for reading the information relating to a trace, it's possible to retrieve every step using the \texttt{get\_steps} method, or a specific step using \texttt{get\_step} method passing the step index.
@@ -70,12 +70,12 @@ From each step, the previous and the next step are also available using the \tex
 
 \paragraph*{Comparing steps.}
 It's not always important to read every variable on each step, sometimes just the ones which are changing or which have changed since the last step may be more useful.
-The \texttt{TraceStep} class implements methods to perform this comparisons automatically which are \texttt{get\_changing\_variables} and \texttt{get\_changed\_variables}.
+The \texttt{TraceStep} class implements methods to perform these comparisons automatically which are \texttt{get\_changing\_variables} and \texttt{get\_changed\_variables}.
 
 Comparing two specific steps is also possible thanks to the \texttt{get\_different\_variables} method of the Step.
 
 \paragraph*{Loopback step.}
-For traces with infinite steps a loopback step is present. A trace can only have one loopback step and it can be obtained with the \texttt{get\_loopback\_step} method.
+For traces with infinite steps, a loopback step is present. A trace can only have one loopback step and it can be obtained with the \texttt{get\_loopback\_step} method.
 
 \begin{listing}
     \label{alg:model-checking-traces}
@@ -92,7 +92,7 @@ To use this feature over a transition it is also possible to pass a formula cont
 The evaluation consists of the following steps:
 \begin{enumerate}
     \item \texttt{Next} operators are pushed to the leaves to allow for substitution of next state variables
-    \item Substitutions for the symbols are produced, from current and next step if available
+    \item Substitutions for the symbols are produced, from the current and the next step if available
     \item The calculated substitutions are applied over the formula
     \item The \texttt{FormulaSimplifier} is used in order to evaluate the formula
 \end{enumerate}

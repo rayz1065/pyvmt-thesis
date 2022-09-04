@@ -3,7 +3,7 @@
 \ltl{} properties aren't always supported directly by model checkers, since usually just safety and liveness properties are supported, which are also included within the core language of \vmtlib{}.
 The importance of these two kinds of properties cannot be overstated, in fact their wide adoption is justified by the fact that they're sufficient even to verify more complex properties like those that can be written in \LTL{} as long as they're encoded properly.
 
-Over the years multiple algorithms were developed to tackle this problem, two of them were chosen to be implemented as part of the thesis work.
+Over the years multiple algorithms were developed to tackle this problem, two of which were chosen to be implemented as part of the thesis work.
 These functionalities aim to assist the end user, offering a layer of abstraction that simplifies the model checking workflow, but they also serve as proof of concept to display the capabilities of this library and how it may be used to create reusable tools and implement complex algorithms in \python{} that don't depend on any underlying solver thanks to \pysmt{}'s formula manipulation tools.
 
 \section{\ltltosmv{} Encoding}
@@ -39,7 +39,7 @@ The properties are then combined into a single liveness property to ensure compa
 A different approach for encoding was presented in "A circuit Approach to \ltl{} Model Checking" \cite{DBLP:conf/fmcad/ClaessenES13}.
 This encoding works a little differently since it doesn't generate the tableau corresponding to the negated \ltl{} formula, it instead creates circuit-like monitors for each of the subformulae in the negated \ltl{} formula capable of verifying whether a counterexample to the specification exists.
 
-For example the specification $\X a \land (b \lor \F \lnot c) \U d$ is negated into $\X \lnot a \lor (\lnot b \land \G c) \R \lnot d$.
+For example, the specification $\X a \land (b \lor \F \lnot c) \U d$ is negated into $\X \lnot a \lor (\lnot b \land \G c) \R \lnot d$.
 The formula is split into its subformulae, each of which is denoted by a variable creating an equivalent formula:
 \begin{align}
            &     \mathit{z_0} \\
@@ -72,7 +72,7 @@ Monitors have 3 outputs: \texttt{accept}, \texttt{failed}, and \texttt{pending}.
 
 The \texttt{LtlCircuitEncodingWalker} has a \texttt{make\_monitor} method that generates the outputs for the monitor, as well as the state variables and their constraints required by the monitor to function.
 The exact values for the signals may be found in the mentioned paper, below the section `List of Monitors for \pltl'.
-The initial activator $\mathit{z_0}$ is replaced by the variable $\mathit{is\_init}$ which is modelled to be true in the first cycle, thus the circuit starts observing the state of the specification right at the start of the model checking process.
+The initial activator $\mathit{z_0}$ is replaced by the variable $\mathit{is\_init}$ which is modeled to be true in the first cycle, thus the circuit starts observing the state of the specification right at the start of the model checking process.
 
 After all of the monitors have been created there are just two more things to compute, the \texttt{has\_failed} condition which is set to true indefinitely when any of the monitors fails, and the \texttt{accept} condition which specifies that every monitor must output \texttt{accept} infinitely often in order for the trace to be a valid counterexample.
 Finally, a single liveness property is generated, $\lnot \mathit{accept}$.
@@ -83,7 +83,7 @@ If this property is demonstrated to be true it means that a counterexample doesn
 \section{Experimental Evaluation}
 
 To validate the efficacy of this approach, an experimental evaluation was conducted on a set of benchmarks.
-The time required by the encoding procedure is negligible compared to the time required by a solver to verify the validity of the generated property, what this evaluation focussed on is therefore the quality of the generated encoding in terms of number of extra state variables required, and the time for solving.
+The time required by the encoding procedure is negligible compared to the time required by a solver to verify the validity of the generated property, what this evaluation focused on is therefore the quality of the generated encoding in terms of number of extra state variables required, and the time for solving.
 
 \begin{figure}
     \includegraphics{ltlenc_time_comparison.png}
@@ -91,9 +91,9 @@ The time required by the encoding procedure is negligible compared to the time r
     \label{fig:ltlenc_time_comparison}
 \end{figure}
 
-The encoders were ran on a set of almost 600 benchmarks, after the conversion \iceia{} was run to evaluate the efficacy of the encoding in terms of aiding the model checking process.
+The encoders were run on a set of almost 600 benchmarks, after the conversion \iceia{} was run to evaluate the efficacy of the encoding in terms of aiding the model checking process.
 From the output of the solver, the \texttt{total\_time} was collected and used as a metric for comparison.
-On the set of benchmarks which was analyzed, the \ltltosmv{} encoding generally performed better than the circuit encoding version, this can be seen in the Figure \ref{fig:ltlenc_time_comparison}.
+On the set of benchmarks that was analyzed, the \ltltosmv{} encoding generally performed better than the circuit encoding version, this can be seen in Figure \ref{fig:ltlenc_time_comparison}.
 
 \begin{figure}
     \includegraphics{ltlenc_stvar_comparison.png}
@@ -102,5 +102,6 @@ On the set of benchmarks which was analyzed, the \ltltosmv{} encoding generally 
 \end{figure}
 
 A possible explanation as to why the circuit encoding is slower can be found in Figure \ref{fig:ltlenc_stvar_comparison} which shows that this kind of encoding with the current implementation requires a much larger number of state variables compared to the \ltltosmv{} version.
-It's possible to improve the efficiency of this algorithm by drastically reducing the number of auxiliary state variables required as suggested in its paper, by not creating a new state variable for each of the \texttt{And} and \texttt{Or} logic operators, instead using a single activator for fomulae containing multiple of them.
+It's possible to improve the efficiency of this algorithm by drastically reducing the number of auxiliary state variables required as suggested in its paper, by not creating a new state variable for each of the \texttt{And} and \texttt{Or} logic operators, instead using a single activator for formulae containing multiple of them.
+\FloatBarrier{}
 

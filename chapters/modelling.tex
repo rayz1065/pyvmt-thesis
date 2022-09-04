@@ -1,14 +1,14 @@
 \chapter{Modelling using \pyvmt{}}
 \label{ch:modelling}
 
-\pyvmt{} exports a \texttt{Model} class which allows the user to define a model from scratch, manually adding variables and formulae or using helper functions to do so.
+\pyvmt{} exports a \texttt{Model} class that allows the user to define a model from scratch, manually adding variables and formulae or using helper functions to do so.
 
 
 \section{State Variables}
-State variables in \pyvmt{} are \pysmt{} \texttt{Symbol}s and can be added to a model using the \texttt{add\_state\_variable} method passing the curr state variable, or the \texttt{create\_state\_variable} helper method.
-\pyvmt{} doesn't keep track of next state variables explicitly, instead it uses a custom operator called \texttt{Next} to wrap formulae referring to the next state and generates a next state variable for substitution when needed (e.g. when passing the model to a model checker).
+State variables in \pyvmt{} are simply \pysmt{} \texttt{Symbol}s, they can be added to any model using the \texttt{add\_state\_variable} method passing the curr state variable, or the \texttt{create\_state\_variable} helper method.
+\pyvmt{} doesn't keep track of the next state variables explicitly, instead it uses a custom operator called \texttt{Next} to wrap formulae referring to the next state and generates a next state variable for substitution when needed (e.g. when passing the model to a model checker).
 
-\paragraph*{Next operator.} The \texttt{Next} function is an addition to the \pysmt{} \texttt{FormulaManager}, it generates a new node containing the custom \texttt{NEXT} operator. It can be used on both \texttt{Symbol}s and more complex formulae of any type, with the only constraint that it cannot be used on formulae which already contain the \texttt{Next} operator. This operators has several advantages:
+\paragraph*{Next operator.} The \texttt{Next} function is an addition to the \pysmt{} \texttt{FormulaManager}, it generates a new node containing the custom \texttt{NEXT} operator. It can be used on both \texttt{Symbol}s and more complex formulae of any type, with the only constraint that it cannot be used on formulae that already contain the \texttt{Next} operator. This operator has several advantages:
 \begin{enumerate}
     \item The user doesn't need to keep track of both curr and next state variables, since the latter can be generated from the former using the \texttt{FormulaManager}.
     \item Explicit replacements with next state variables are not performed while generating a next state formula, making debugging easier.
@@ -16,7 +16,7 @@ State variables in \pyvmt{} are \pysmt{} \texttt{Symbol}s and can be added to a 
 \end{enumerate}
 
 \section{Inputs}
-Inputs are variables which behave in a non-deterministic way. They can be used to model an external system, an action to which the model must react, or as placeholder when combining multiple transition systems.
+Inputs are variables that behave in a non-deterministic way. They can be used to model an external system, an action to which the model must react, or as placeholders when combining multiple transition systems.
 Just like for state variables, inputs can be added using the \texttt{add\_input\_variable} method or using the \texttt{create\_input\_variable} helper method.
 
 \section{Constraints}
@@ -45,14 +45,14 @@ The \texttt{add\_invar} helper method can be used to quickly model such constrai
 Since invariant constraints require adding an init constraint, next state variables cannot be present in them.
 
 \paragraph*{Frozen variables.}
-Frozen variables are variables which never change in the course of the execution.
-They can be useful to represent parameters which affect the behavior of the state machine, but are fixed once their value is initialized.
-The \texttt{create\_frozen\_var} helper method can be used to create such a variable directly without having to specify the transition constraint by which it evolves. It can be combined with a call to \texttt{add\_init} to specify a set or a range of values which the variable can assume.
+Frozen variables are variables that never change in the course of the execution.
+They can be useful to represent parameters that affect the behavior of the state machine but are fixed once their value is initialized.
+The \texttt{create\_frozen\_var} helper method can be used to create such a variable directly without having to specify the transition constraint by which it evolves. It can be combined with a call to \texttt{add\_init} to specify a set or a range of values that the variable can assume.
 
 \section{Properties}
-Properties do not determine the states of the model or how it evolves, they instead correspond to some condition which we want to verify.
+Properties do not determine the states of the model or how it evolves, they instead correspond to some condition that we want to verify.
 There are 3 kinds of properties in \pyvmt{}: invar, live, and \ltl{}.
-Adding a property directly to the model can be useful for serialization which will be discussed in the section \ref{sec:vmtlib-serialization} as well as model checking which will be discussed in chapter \ref{ch:model-checking}.
+Adding a property directly to the model can be useful for serialization which will be discussed in section \ref{sec:vmtlib-serialization} as well as model checking which will be discussed in chapter \ref{ch:model-checking}.
 
 \paragraph*{Invariant properties.}
 Invariant properties are the simplest, they specify that a formula has to be verified in the initial state and all subsequent states.

@@ -1,7 +1,7 @@
 \chapter{Other Features}
 \label{ch:other-features}
 
-This chapter will discuss in detail some of the other features that are available within \pyvmt{}, particularly focussing on tools which may be useful or even necessary for the end user to perform certain computations while using a model.
+This chapter will discuss in detail some of the other features that are available within \pyvmt{}, particularly focussing on tools that may be useful or even necessary for the end user to perform certain computations while using a model.
 
 \section{Merging Transition Systems}
 \paragraph*{Synchronous compositions.}
@@ -11,7 +11,7 @@ For symbolic transition systems, synchronous composition means creating a transi
 This can simply be done by means of conjunction between the original constraints.
 
 Merging symbolic transition systems through synchronous composition in \pyvmt{} can be done using the \texttt{compose} function, which takes as input two models and returns the resulting model.
-It was decided to keep the functionality as simple as possible, in order to avoid behaviors which the user might not expect like having the variables change to \texttt{FreshSymbol}s as the systems are merged.
+It was decided to keep the functionality as simple as possible, in order to avoid behaviors that the user might not expect like having the variables change to \texttt{FreshSymbol}s as the systems are merged.
 For that reason, whenever a state variable and/or an input coincide, they're considered the same variable in the final system.
 This can be useful to make the two models communicate by replacing a nondeterministic input variable with a constrained state variable as defined from another model.
 
